@@ -21,13 +21,17 @@ contribute to this phenomenon. We intend to explore the geographic and
 climatic impact on mosquito species and by extension malaria. With the
 core understanding that understanding malaria also involves
 understanding Anopheles mosquito species which are vectors of the
-disease. We found a great dataset that catalogs malaria incidence,
-mosquito prevalence, mosquito species, among other variables. *We hope
-to update the information that the class (and public) has about malaria
-and its vectors, and call attention rising risk of the evolution of
-resistant Anopheles mosquito species* We found mosquito species and its
-causal relationship to malaria, demographics, and other species to be
-interesting as well\!
+disease. Our motivation also stems from the fact that some of us (group
+members) have experienced the incidence of malaria on a first hand basis
+and have observed how it seems to have become a normal in various other
+parts of the world. We hope to contribute our knowledge quota by
+shedding more light on this. We found a great dataset that catalogs
+malaria incidence, mosquito prevalence, mosquito species, among other
+variables. *We hope to update the information that the class (and
+public) has about malaria and its vectors, and call attention rising
+risk of the evolution of resistant Anopheles mosquito species* We found
+mosquito species and its causal relationship to malaria, demographics,
+and other species to be interesting as well\!
 
 **The intended final products**
 
