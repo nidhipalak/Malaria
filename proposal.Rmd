@@ -15,48 +15,66 @@ Nidhi Patel (np2619)<br>
 
 **Tentative title**
 
+Team Malaria (we're workshoping it)
 
 **The motivation**
 
-Malaria is not common in America.  
+We have never given much thought about malaria, but half the world's population lives in high risk malaria transmission regions.  
+
+We found a great dataset that catalogs malaria incidence, mosquito prevalence, and mosquito species.  
 
 **The intended final products**
 
-*   what is the relationship between species of mosquitoes 
-    *   can we visualize evolution of species over time?
-    *   is there overlap of mosquito species?
-    *   is the proportion of mosquito species the same across all continents?
-    *   do the rates of evolution change over time (how long were a species dominant during a time period?)
-*   trends over years
-    *   heat, precipitation, vegetation, etc over a year with mosquito prevalence/malaria incidence
-*   do areas with higher sickle cell traits have less malaria incidence?
-*   compare time periods
+*   What is the relationship between species of mosquitoes 
+    *   Can we visualize evolution of species over time?
+    *   Is there overlap of mosquito species?
+    *   Is the proportion of mosquito species the same across all continents?
+    *   Do the rates of evolution change over time (how long were a species dominant during a time period?)
+*   Trends over years
+    *   Heat, precipitation, vegetation, etc over a year with mosquito prevalence/malaria incidence
+*   Do areas with higher sickle cell traits have less malaria incidence?
+*   Compare time periods
 
 Potential ideas:
 
-*   climate change and mosquito prevalence
-*   relation of species genotypes 
-*   health education
-*   topography
-*   drop in malaria incidence with introduction of interventions (nets, etc)
-*   severity of malaria in relation to species/time
+*   Climate change and mosquito prevalence
+*   Relation of species genotypes 
+*   Health education
+*   Topography
+*   Drop in malaria incidence with introduction of interventions (nets, etc)
+*   Severity of malaria in relation to species/time
 
 **The anticipated data sources**
 
 [Malaria Atlas](https://malariaatlas.org/api-docs/) <br>
-[Malaria Atlas Mortality](https://malariaatlas.org/malaria-burden-data-download/)
-
+[Malaria Atlas Mortality](https://malariaatlas.org/malaria-burden-data-download/) <br>
+[Hydro-climate](https://archive.researchdata.leeds.ac.uk/715/) <br>
+[Net mapping](https://figshare.com/articles/LLIN_Raw_Data_xlsx/12552137/1)
 
 
 **The planned analyses / visualizations / coding challenges**
 
 *   Planned analysis
-    * we want to see the proportion of mosquito species across the different continent and relationship to malaria incidence
+    * We want to see the proportion of mosquito species across the different continent and relationship to malaria incidence
 *   Visualizations
-    * a time series world map with mosquito species prevalence 
+    *   A time series (2000-2017) world map with mosquito species prevalence 
+        *   Maybe screenshots of year to year or a more smooth graphic?
+    *   Incidence of malaria
+    *   Genealogy of mosquito species
+    *   Relationship with climate and malaria transmission
 *   Coding challenge
-    *   we want to create a genotype mapping visual of mosquito species. We have not found an available dataset with this data. Our potential solution is to use Selector Gadget and pull information from Wikipedia, which sounds tedious.  
+    *   We want to create a genotype mapping visual of mosquito species. We have not found an available dataset with this data. Our potential solution is to use Selector Gadget and pull information from Wikipedia, which sounds tedious.  
+    *   Time series world map
+    *   Missing data
 
 **The planned timeline**
 
-*   weekly team meetings
+*   Bi-weekly team meetings
+*   Steps:
+    *   Nov 7-10: clean data
+    *   Nov 11-16: build visualizations
+    *   Nov 17-19: clean up visualizations
+    *   Nov 20-21: layout
+    *   Nov 22-25: Write report; tell a story
+    *   Nov 28-30: Make presentation
+    *   Dec 1-4: Record
