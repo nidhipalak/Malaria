@@ -5,14 +5,14 @@ Team Malaria
 
 **The group members**
 
-Wura Olawole (wo2179) Hanfei Qi (hq2182) Murrel Pereira (mwp2123) Laura
-Gomez Merchan (lcg2154) Nidhi Patel (np2619)
+Wura Olawole (wo2179) <br> Hanfei Qi (hq2182)<br> Murrel Pereira
+(mwp2123)<br> Laura Gomez Merchan (lcg2154)<br> Nidhi Patel (np2619)<br>
 
 **Tentative title**
 
 **The motivation**
 
-Malaria is not too common in America.
+Malaria is not common in America.
 
 **The intended final products**
 
@@ -24,21 +24,39 @@ Malaria is not too common in America.
       - do the rates of evolution change over time (how long were a
         species dominant during a time period?)
   - trends over years
-  - sickle cell overlapping malaria rates
+      - heat, precipitation, vegetation, etc over a year with mosquito
+        prevalence/malaria incidence
+  - do areas with higher sickle cell traits have less malaria incidence?
   - compare time periods
 
 Potential ideas:
 
   - climate change and mosquito prevalence
   - relation of species genotypes
-  - compare how
   - health education
   - topography
+  - drop in malaria incidence with introduction of interventions (nets,
+    etc)
+  - severity of malaria in relation to species/time
 
 **The anticipated data sources**
 
-[Malaria Atlas](https://malariaatlas.org/api-docs/)
+[Malaria Atlas](https://malariaatlas.org/api-docs/) <br> [Malaria Atlas
+Mortality](https://malariaatlas.org/malaria-burden-data-download/)
 
 **The planned analyses / visualizations / coding challenges**
 
+  - Planned analysis
+      - we want to see the proportion of mosquito species across the
+        different continent and relationship to malaria incidence
+  - Visualizations
+      - a time series world map with mosquito species prevalence
+  - Coding challenge
+      - we want to create a genotype mapping visual of mosquito species.
+        We have not found an available dataset with this data. Our
+        potential solution is to use Selector Gadget and pull
+        information from Wikipedia, which sounds tedious.
+
 **The planned timeline**
+
+  - weekly team meetings
