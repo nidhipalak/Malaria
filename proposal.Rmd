@@ -19,7 +19,8 @@ Team Malaria (we're workshoping it)
 
 **The motivation**
 
-Although America is not a malaria hotspot, half the world's population lives in high risk malaria transmission regions. We searched for data and found a great set that catalogs malaria incidence, mosquito prevalence, mosquito species, among other variables. *We hope to inform the class (and public) about malaria and its vectors.* 
+Although America is not a malaria hotspot, half of the world's population lives in high risk malaria transmission regions. To this end, we seek to link and explore the interplay of various variables that contribute to this phenomenon. We intend to explore the geographic and climatic impact on mosquito species and by extension malaria. With the core understanding that understanding malaria also involves understanding Anopheles mosquito species which are vectors of the disease.  We found a great dataset that catalogs malaria incidence, mosquito prevalence, mosquito species, among other variables. 
+*We hope to update the information that the class (and public) has about malaria and its vectors, and call attention rising risk of the evolution of resistant Anopheles mosquito species* 
 We found mosquito species and its causal relationship to malaria, demographics, and other species to be interesting as well!
 
 **The intended final products**
