@@ -73,20 +73,12 @@ MMR_vec_data %>%
 
 pal <- colorFactor("magma", MMR_vec_data %>% pull(species))
 
-
 MMR_vec_data %>% 
   leaflet() %>% 
   addProviderTiles(providers$CartoDB.Positron) %>% 
-  addCircleMarkers(~longitude, ~latitude, radius = 1, color = ~pal(species))
+  addCircleMarkers(~longitude, ~latitude, radius = 1, color = ~pal(species)) 
 ```
 
-
-```{r}
-
-MMR_vec_data %>% 
-  leaflet() %>% 
-  addTiles() %>% 
-  addCircleMarkers(~longitude, ~latitude, radius = 1)
-```
+## Compare 3 years to each other within Madagascar?
 
 # Do some years have certain species occur more? (Why - climate?)
