@@ -1,0 +1,41 @@
+---
+title: "Mosquito Species Exploration"
+author: "Murrel Pereira"
+date: "11/9/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(malariaAtlas)
+
+knitr::opts_chunk$set(
+  fig.width=6,
+  fig.asp=.6,
+  out.width ="90%"
+)
+
+theme_set(theme_minimal() +theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.color = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete=scale_fill_viridis_d
+```
+
+## Import
+
+Bring in species dataset as a tibble. Instructions to bring in dataset is here: [Mapped Atlas] (https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html).
+
+# One Country (Madagascar)
+
+```{r}
+MMR_vec_data <- getVecOcc(country = "Madagascar") %>% 
+  as_tibble()
+
+```
+
+
