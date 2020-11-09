@@ -2,13 +2,14 @@
 title: "Mosquito Species Exploration"
 author: "Murrel Pereira"
 date: "11/9/2020"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(malariaAtlas)
 library(leaflet)
+library(ggridges)
 
 knitr::opts_chunk$set(
   fig.width=6,
@@ -31,15 +32,15 @@ scale_fill_discrete=scale_fill_viridis_d
 
 Bring in species dataset as a tibble. Instructions to bring in dataset is here: [Mapped Atlas] (https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html).
 
-# One Country (Madagascar)
+## One Country (Madagascar)
 
-```{r}
+```{r, include=FALSE}
 MMR_vec_data <- getVecOcc(country = "Madagascar") %>% 
   as_tibble()
 
 ```
 
-# Understand species breakdown
+### Understand species breakdown
 
 ```{r}
 
@@ -57,28 +58,117 @@ MMR_vec_data %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-# How many papers is this data from?
+### How many papers is this data from?
 
 ```{r}
-MMR_vec_data_paper = 
-MMR_vec_data %>% 
+
+MMR_vec_data %>%
   count(citation) %>% 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  head(10) %>% 
+  knitr::kable()
+  
 ```
 
 
-# Are the species spread out regionally?
+### Are the species spread out regionally?
 
 ```{r}
 
-pal <- colorFactor("magma", MMR_vec_data %>% pull(species))
+pal <- colorFactor("viridis", MMR_vec_data %>% pull(species_plain))
 
 MMR_vec_data %>% 
   leaflet() %>% 
   addProviderTiles(providers$CartoDB.Positron) %>% 
-  addCircleMarkers(~longitude, ~latitude, radius = 1, color = ~pal(species)) 
+  addCircleMarkers(~longitude, ~latitude, radius = 1, color = ~pal(species_plain)) %>% 
+  addLegend("bottomright", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.8
+  )
+
 ```
 
-## Compare 3 years to each other within Madagascar?
+### Compare 3 years to each other within Madagascar?
+
+```{r}
+
+```
+
+## Look across Africa
+
+Import data
+```{r, include=FALSE}
+Africa_vec_data = 
+  getVecOcc(continent = "Africa") %>% 
+  as_tibble()
+```
+
+What is the spread of the different species across different countries - bar chart and scatterplot?
+
+The bar chart is harder to read but tells you about the most predominant mosquito species and the scatterplot tells you a little more about prevalent species in different countries.
+```{r}
+Africa_vec_data %>% 
+  mutate(
+    species_plain = as.factor(species_plain),
+    species_plain = fct_infreq(species_plain)
+  ) %>% 
+  ggplot(aes(x=species_plain, fill = country)) + geom_bar() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+Africa_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  mutate(
+    country = as.factor(country)
+  ) %>% 
+  ggplot(aes(x=fct_reorder(country,desc(n)), y=n, fill = species_plain, color = species_plain)) + geom_point() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+         
+```
+
+What is the density of different species across different countries?
+
+```{r}
+pal = colorFactor("viridis", Africa_vec_data %>% pull(species_plain))
+
+Africa_vec_data %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~longitude, ~latitude, radius = 1, color = ~pal(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5
+  )
+
+```
+
+Summary data across Africa
+```{r}
+Africa_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  ggplot(aes(x=max_lat, y=max_long, color = species_plain, fill = species_plain, size = n)) + geom_point()
+```
+
+Turn above to a leaflet
+
+```{r}
+
+pal = colorFactor("viridis", Africa_vec_data %>% pull(species_plain))
+Africa_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5
+  )
+```
+
+
+
+
 
 # Do some years have certain species occur more? (Why - climate?)
