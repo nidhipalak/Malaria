@@ -13,8 +13,8 @@ library(ggridges)
 
 knitr::opts_chunk$set(
   fig.width=6,
-  fig.asp=.6,
-  out.width ="90%"
+  fig.asp=.9,
+  out.width ="60%"
 )
 
 theme_set(theme_minimal() +theme(legend.position = "bottom"))
@@ -55,7 +55,8 @@ MMR_vec_data %>%
     species = fct_infreq(species)
   ) %>% 
   ggplot(aes(x=species, fill = species)) + geom_bar() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.text=element_text(size=5),) 
 ```
 
 ### How many papers is this data from?
@@ -88,11 +89,6 @@ MMR_vec_data %>%
 
 ```
 
-### Compare 3 years to each other within Madagascar?
-
-```{r}
-
-```
 
 ## Look across Africa
 
@@ -113,7 +109,12 @@ Africa_vec_data %>%
     species_plain = fct_infreq(species_plain)
   ) %>% 
   ggplot(aes(x=species_plain, fill = country)) + geom_bar() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.text=element_text(size=5),
+        legend.title=element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 0.2))) +
+  labs(title = "Count of Mosquito Species in African countries",x = "Mosquito Species"
+  )
 
 Africa_vec_data %>% 
   group_by(country, species_plain) %>% 
@@ -166,9 +167,5 @@ Africa_vec_data %>%
     opacity = 0.5
   )
 ```
-
-
-
-
 
 # Do some years have certain species occur more? (Why - climate?)
