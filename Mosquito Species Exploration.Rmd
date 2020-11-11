@@ -244,10 +244,10 @@ continent_vec_data %>%
   summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
   leaflet() %>% 
   addProviderTiles(providers$CartoDB.Positron) %>% 
-  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal(species_plain)) %>% 
-  addLegend("bottomleft", pal = pal, values = ~species_plain,
-    title = "Mosquito Species",
-    opacity = 0.5
-  )
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal(species_plain)) #%>% 
+ # addLegend("bottomleft", pal = pal, values = ~species_plain,
+  #  title = "Mosquito Species",
+  #  opacity = 0.5
+ # )
 ```
 
