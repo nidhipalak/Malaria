@@ -1,0 +1,101 @@
+---
+title: "Mortality"
+author: "Nidhi Patel"
+date: "11/10/2020"
+output: github_document
+---
+```{r}
+library(tidyverse)
+library(rvest)
+library(httr)
+library(plotly)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.height = 6,
+  out.width = "90%")
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_color_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## Mortality rates - reported
+
+Scrape a table
+
+[Mortality Rates Reported](https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*)
+
+```{r}
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*"
+
+reported = read_html(url)
+```
+
+extract the table(s)
+
+```{r}
+reported = reported %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value) %>% 
+  rename(reported_deaths = numeric_value)
+```
+
+
+## Mortality rates - estimated
+
+Scrape a table
+
+[Mortality Rates Estimated](https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*)
+
+```{r}
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*"
+
+estimated = read_html(url)
+```
+
+extract the table
+
+```{r}
+estimated = estimated %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value, low_range, high_range) %>% 
+  rename(estimated_deaths = numeric_value, 
+         low_est = low_range,
+         high_est = high_range)
+```
+
+
+## Merge tables
+
+```{r}
+burden = 
+  left_join(reported, estimated, by = c("country" = "country", "year" = "year", "region" = "region")) %>% 
+  write_csv("./data/mortality.csv")
+```
+
+## Plot
+
+```{r}
+burden %>% 
+  filter(region %in% "Africa") %>% 
+  ggplot(aes(x = year, y = reported_deaths, color = country)) + 
+  geom_point() 
+  # theme(legend.title = element_blank()) %>% 
+  # geom_boxplot(y = upper_limit = high_range, lower_limit = low_range)
+```
+
