@@ -89,7 +89,6 @@ MMR_vec_data %>%
 
 ```
 
-
 ## Look across Africa
 
 Import data
@@ -168,4 +167,87 @@ Africa_vec_data %>%
   )
 ```
 
-# Do some years have certain species occur more? (Why - climate?)
+# Do this across multiple continents (South America, Africa, and Asia)
+
+Import data
+```{r, include=FALSE}
+Asia_vec_data = 
+  getVecOcc(continent = "Asia") %>% 
+  as_tibble()
+
+SA_vec_data = 
+  getVecOcc(continent = "Americas") %>% 
+  as_tibble()
+
+continent_vec_data = bind_rows(Africa_vec_data, Asia_vec_data, SA_vec_data)
+```
+
+Bar chart and scatterplot
+
+```{r}
+continent_vec_data %>% 
+  mutate(
+    species_plain = as.factor(species_plain),
+    species_plain = fct_infreq(species_plain)
+  ) %>% 
+  ggplot(aes(x=species_plain, fill = continent_id)) + geom_bar() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.text=element_text(size=5),
+        legend.title=element_blank()) +
+  guides(color = guide_legend(override.aes = list(size = 0.2))) +
+  labs(title = "Count of Mosquito Species in African, SA, Asian countries",x = "Mosquito Species"
+  )
+
+continent_vec_data %>% 
+  group_by(country,continent_id, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  mutate(
+    continent_id = as.factor(continent_id)
+  ) %>% 
+  ggplot(aes(x=max_long, y=n, fill = species_plain, color = species_plain)) + geom_point() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+         
+```
+
+
+What is the density of different species across different countries?
+
+```{r}
+pal = colorFactor("viridis", continent_vec_data %>% pull(species_plain))
+
+continent_vec_data %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~longitude, ~latitude, radius = 1, color = ~pal(species_plain)) %>% 
+  addLegend("bottomright", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5
+  )
+
+```
+
+Summary data across continents
+```{r}
+continent_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  ggplot(aes(x=max_lat, y=max_long, color = species_plain, fill = species_plain, size = n)) + geom_point()
+```
+
+Turn above to a leaflet
+
+```{r}
+
+pal = colorFactor("viridis", continent_vec_data %>% pull(species_plain))
+continent_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5
+  )
+```
+
