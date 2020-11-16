@@ -1,14 +1,15 @@
 ---
-title: "Disease Statistics: Prevalence and Mortality"
+title: "Disease Interventions"
 output: 
   html_document:
     toc: true
     toc_float: true
 ---
+Introduction to Page
 
-### Prevalence
+### Education
 
-### Mortality
+### Mosquito Nets
 
 
 

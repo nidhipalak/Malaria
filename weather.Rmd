@@ -1,14 +1,17 @@
 ---
-title: "Disease Statistics: Prevalence and Mortality"
+title: "Possible Correlations"
 output: 
   html_document:
     toc: true
     toc_float: true
 ---
 
-### Prevalence
+Introduction to Page
+Why are we correlating to temp and percipitation
 
-### Mortality
+### Temperature
+
+### Percipitation
 
 
 

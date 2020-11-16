@@ -1,15 +1,15 @@
-name: "Malaria""
+name: "Malaria"
 output_dir: "."
 navbar:
-  title: "What is malaria?"
+  title: "Home"
   right:
-    - text: "Disease Statistics: Prevalance and Mortality"
+    - text: "Statistics"
       href: prev_mortality.html
-    - text: "Disease Causes: Parasites and Mosquitoes"
+    - text: "Causes"
       href: pr_mosq.html
-    - text: "Possible Correlations: Weather"
+    - text: "Correlations"
       href: weather.html
-    - text: "Disease Interventions"
+    - text: "Interventions"
       href: interventions.html
 
 output:

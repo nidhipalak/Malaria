@@ -7,6 +7,10 @@ output:
 
 ---
 
-### What is Malaria?
+### Background
 
 Learn more about malaria by clicking the links in the navigation bar.
+
+### Symptoms
+
+### Malaria Eradication

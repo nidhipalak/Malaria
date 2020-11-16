@@ -1,16 +1,13 @@
 ---
-title: "Disease Statistics: Prevalence and Mortality"
+title: "Disease Statistics"
 output: 
   html_document:
     toc: true
     toc_float: true
 ---
 
+Introduction to Page
+
 ### Prevalence
 
 ### Mortality
-
-
-
-
-
