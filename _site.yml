@@ -1,0 +1,17 @@
+name: "Malaria""
+output_dir: "."
+navbar:
+  title: "What is malaria?"
+  right:
+    - text: "Disease Statistics: Prevalance and Mortality"
+      href: prev_mortality.html
+    - text: "Disease Causes: Parasites and Mosquitoes"
+      href: pr_mosq.html
+    - text: "Possible Correlations: Weather"
+      href: weather.html
+    - text: "Disease Interventions"
+      href: interventions.html
+
+output:
+  html_document:
+    theme: flatly
