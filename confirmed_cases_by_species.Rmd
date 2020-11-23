@@ -16,6 +16,11 @@ confirm_df =
   filter(str_detect(
     Year, "P. falciparum|P. vivax"
   )) %>% 
+  pivot_longer(
+    cols = "2010":"2018",
+    names_to = "years",
+    values_to = "cases"
+  ) %>% 
   janitor::clean_names() %>% 
   rename(species = year,
          country = who_region_country_area)
@@ -28,6 +33,10 @@ countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambiqu
 
 by_country = 
   confirm_df %>% 
-  filter(country %in% countries)
+  filter(country %in% countries) %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. falciparum" ~ "P. falciparum")) %>% 
+  drop_na(species)
 ```
 
