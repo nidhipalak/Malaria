@@ -10,6 +10,13 @@ Introduction to Page
 
 ### Vectors: Mosquitoes
 
+Over 3,500 species of mosquitoes grouped into 41 genera have been identified. Of these, Malaria is only transmitted by the female species of the genus Anopheles. To date, there are 430 species of this genus approximately, and of these only 30 to 40 of these species are vectors in nature that actually transmit Malaria.
+
+Although these Malaria causing vectors are located in most regions of the world, there are often different species that are indigenous and more common than others in different regions of the world. (This poses a risk of re-occurrence in regions where Malaria has been eliminated)
+
+
+Anopheles mosquitoes life cycle is egg, larva, pupa, and adult. The female mosquitoes (which transmit Malaria) use blood meals for their egg production. They obtain their blood meals from Humans, cattles etc. Unlike in humans, the parasite does not affect or cause mosquitoes to be ill therefore they are able to host the life cyle of the parasite. Ambient temperature, humidity and the life span of the mosquito.
+
 ### Causes: Parasite
 
 
