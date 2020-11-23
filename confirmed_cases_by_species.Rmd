@@ -1,0 +1,33 @@
+---
+title: "Confirmed Cases by PR Species"
+author: "Hanfei Qi"
+output: html_document
+---
+
+```{r setup, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+```{r}
+confirm_df = 
+  read_xls(
+    "./data/reported_cases_by_species.xls", range = "A4:K502") %>% 
+  filter(str_detect(
+    Year, "P. falciparum|P. vivax"
+  )) %>% 
+  janitor::clean_names() %>% 
+  rename(species = year,
+         country = who_region_country_area)
+```
+
+Countries of interest:
+Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi
+```{r}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea")
+
+by_country = 
+  confirm_df %>% 
+  filter(country %in% countries)
+```
+
