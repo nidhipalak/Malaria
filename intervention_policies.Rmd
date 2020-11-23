@@ -1,0 +1,112 @@
+---
+title: "Intervention Policies"
+author: "Murrel Pereira"
+date: "11/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(malariaAtlas)
+library(leaflet)
+library(ggridges)
+library(readxl)
+
+knitr::opts_chunk$set(
+  fig.width=6,
+  fig.asp=.9,
+  out.width ="60%"
+)
+
+theme_set(theme_minimal() +theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.color = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete=scale_fill_viridis_d
+```
+
+```{r}
+
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea")
+
+policy_pf_df = 
+  read_excel(
+    "./data/antimalarial_drug_policy.xlsx", range = "A4:E105") %>% 
+  janitor::clean_names() %>% 
+  rename(
+    country = who_region_country_area
+  ) %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  pivot_longer(
+    uncomplicated_unconfirmed:prevention_during_pregnancy,
+    names_to = "case_type",
+    values_to = "treatment_policy"
+  ) %>% 
+  mutate(
+    al = str_detect(treatment_policy, "AL"),
+    as = str_detect(treatment_policy, "AS"),
+    qn = str_detect(treatment_policy, "QN"),
+    sp_ipt = str_detect(treatment_policy, "SP\\(IPT"),
+    aq = str_detect(treatment_policy, "AQ"),
+    am = str_detect(treatment_policy, "AM"),
+    cq = str_detect(treatment_policy, "CQ"),
+    pq = str_detect(treatment_policy, "PQ"),
+  ) %>% 
+  select(-treatment_policy)
+
+policy_pf_df = 
+policy_pf_df %>% 
+  pivot_longer(
+    al:pq,
+    names_to = "treatment",
+    values_to = "treatment_policy"
+  ) %>% 
+  nest(treatment_policies_df = c(case_type, treatment, treatment_policy))
+
+```
+
+```{r}
+estimate_cases_deaths_df = 
+  read_excel(
+    "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
+  janitor::clean_names() %>% 
+  filter(country %in% countries) %>% 
+  nest(pop_case_death_estimates_df = c(year, population_at_risk, cases_lower, cases_point, cases_upper, 
+    deaths_lower, deaths_point, deaths_upper))
+```
+
+Join the estimated cases_deaths with the drug policies
+```{r}
+
+complete_df = 
+  left_join(policy_pf_df, estimate_cases_deaths_df, by = "country") %>% 
+  select(who_region, country, treatment_policies_df, pop_case_death_estimates_df)
+  
+```
+
+clean commodities distribution data
+
+```{r}
+commodities_df =
+  read_excel(
+    "./data/commodities_distribution.xlsx", range = "A4:H297") %>% 
+  janitor::clean_names() %>% 
+  rename(country = who_region_country_area) %>% 
+  fill(country, .direction = "down") %>% 
+  filter(country %in% countries) %>% 
+  nest(commodities_df = c(year:act_treatment_courses_delivered))
+```
+
+update complete_df
+
+```{r}
+complete_df =
+  left_join(complete_df, commodities_df, by = "country")
+```
+
