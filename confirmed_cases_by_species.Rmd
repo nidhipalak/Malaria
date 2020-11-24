@@ -1,10 +1,10 @@
 ---
 title: "Confirmed Cases by PR Species"
 author: "Hanfei Qi"
-output: html_document
+output: github_document
 ---
 
-```{r setup, message = FALSE, warning = FALSE}
+```{r setup, message = FALSE, warning = FALSE, include=FALSE}
 library(tidyverse)
 library(readxl)
 library(plotly)
@@ -26,7 +26,7 @@ scale_colour_discrete = scale_color_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-```{r}
+```{r, warning = FALSE, include=FALSE}
 confirm_df = 
   read_xls(
     "./data/reported_cases_by_species.xls", range = "A4:K502") %>% 
@@ -45,7 +45,7 @@ confirm_df =
 
 Countries of interest:
 Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi
-```{r}
+```{r, warning = FALSE, include=FALSE}
 countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
 
 by_country = 
@@ -58,7 +58,7 @@ by_country =
 ```
 
 
-```{r}
+```{r, warning = FALSE, include=FALSE}
 by_country %>% 
   mutate(
     text_label = str_c("Year: ", years, "\nCases: ", cases)
