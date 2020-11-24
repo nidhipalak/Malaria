@@ -7,6 +7,23 @@ output: html_document
 ```{r setup, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(readxl)
+library(plotly)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ```{r}
@@ -38,5 +55,17 @@ by_country =
     species = case_when(
       species == "Total: P. falciparum" ~ "P. falciparum")) %>% 
   drop_na(species)
+```
+
+
+```{r}
+by_country %>% 
+  mutate(
+    text_label = str_c("Year: ", years, "\nCases: ", cases)
+  ) %>% 
+  plot_ly(
+    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    color = ~country, text = ~text_label, alpha = 0.5
+  )
 ```
 
