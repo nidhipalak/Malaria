@@ -29,7 +29,7 @@ scale_colour_discrete = scale_color_viridis_d
 scale_fill_discrete=scale_fill_viridis_d
 ```
 
-```{r}
+```{r, include=FALSE}
 
 countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea")
 
@@ -71,42 +71,44 @@ policy_pf_df %>%
 
 ```
 
-```{r}
+```{r, include=FALSE}
 estimate_cases_deaths_df = 
   read_excel(
     "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
   janitor::clean_names() %>% 
   filter(country %in% countries) %>% 
-  nest(pop_case_death_estimates_df = c(year, population_at_risk, cases_lower, cases_point, cases_upper, 
+  nest(pop_case_death_estimates_df = c(population_at_risk, cases_lower, cases_point, cases_upper, 
     deaths_lower, deaths_point, deaths_upper))
 ```
 
-Join the estimated cases_deaths with the drug policies
-```{r}
+
+```{r, include=FALSE}
 
 complete_df = 
   left_join(policy_pf_df, estimate_cases_deaths_df, by = "country") %>% 
-  select(who_region, country, treatment_policies_df, pop_case_death_estimates_df)
+  select(who_region, country, year, treatment_policies_df, pop_case_death_estimates_df)
   
 ```
 
-clean commodities distribution data
-
-```{r}
+```{r, include=FALSE}
 commodities_df =
   read_excel(
     "./data/commodities_distribution.xlsx", range = "A4:H297") %>% 
   janitor::clean_names() %>% 
   rename(country = who_region_country_area) %>% 
   fill(country, .direction = "down") %>% 
-  filter(country %in% countries) %>% 
-  nest(commodities_df = c(year:act_treatment_courses_delivered))
+  filter(country %in% countries) 
 ```
 
-update complete_df
+```{r, include=FALSE}
+complete_df =
+  left_join(complete_df, commodities_df, by = c("country","year"))
+```
 
 ```{r}
-complete_df =
-  left_join(complete_df, commodities_df, by = "country")
+complete_df_unnest = 
+  complete_df %>% 
+  unnest(c(treatment_policies_df)) %>% 
+  unnest(c(pop_case_death_estimates_df)) 
 ```
 

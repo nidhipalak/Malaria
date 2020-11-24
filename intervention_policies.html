@@ -304,66 +304,7 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>countries = c(&quot;Nigeria&quot;, &quot;Democratic Republic of the Congo&quot;, &quot;Uganda&quot;,&quot;Mozambique&quot;, &quot;Côte d&#39;Ivoire&quot;, &quot;Niger&quot;, &quot;Burkina Faso&quot;, &quot;Mali&quot;, &quot;Angola&quot;, &quot;United Republic of Tanzania&quot;, &quot;India&quot;, &quot;Ghana&quot;, &quot;Cameroon&quot;, &quot;Rwanda&quot;, &quot;Benin&quot;, &quot;Malawi&quot;, &quot;Kenya&quot;, &quot;Guinea&quot;)
 
-policy_pf_df = 
-  read_excel(
-    &quot;./data/antimalarial_drug_policy.xlsx&quot;, range = &quot;A4:E105&quot;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  rename(
-    country = who_region_country_area
-  ) %&gt;% 
-  filter(
-    country %in% countries
-  ) %&gt;% 
-  pivot_longer(
-    uncomplicated_unconfirmed:prevention_during_pregnancy,
-    names_to = &quot;case_type&quot;,
-    values_to = &quot;treatment_policy&quot;
-  ) %&gt;% 
-  mutate(
-    al = str_detect(treatment_policy, &quot;AL&quot;),
-    as = str_detect(treatment_policy, &quot;AS&quot;),
-    qn = str_detect(treatment_policy, &quot;QN&quot;),
-    sp_ipt = str_detect(treatment_policy, &quot;SP\\(IPT&quot;),
-    aq = str_detect(treatment_policy, &quot;AQ&quot;),
-    am = str_detect(treatment_policy, &quot;AM&quot;),
-    cq = str_detect(treatment_policy, &quot;CQ&quot;),
-    pq = str_detect(treatment_policy, &quot;PQ&quot;),
-  ) %&gt;% 
-  select(-treatment_policy)
-
-policy_pf_df = 
-policy_pf_df %&gt;% 
-  pivot_longer(
-    al:pq,
-    names_to = &quot;treatment&quot;,
-    values_to = &quot;treatment_policy&quot;
-  ) %&gt;% 
-  nest(treatment_policies_df = c(case_type, treatment, treatment_policy))</code></pre>
-<pre class="r"><code>estimate_cases_deaths_df = 
-  read_excel(
-    &quot;./data/population_at_risk_estimated_cases_deaths.xls&quot;, sheet = &quot;apendix_f_data&quot;, range = &quot;A2:J1037&quot;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  filter(country %in% countries) %&gt;% 
-  nest(pop_case_death_estimates_df = c(year, population_at_risk, cases_lower, cases_point, cases_upper, 
-    deaths_lower, deaths_point, deaths_upper))</code></pre>
-<p>Join the estimated cases_deaths with the drug policies</p>
-<pre class="r"><code>complete_df = 
-  left_join(policy_pf_df, estimate_cases_deaths_df, by = &quot;country&quot;) %&gt;% 
-  select(who_region, country, treatment_policies_df, pop_case_death_estimates_df)</code></pre>
-<p>clean commodities distribution data</p>
-<pre class="r"><code>commodities_df =
-  read_excel(
-    &quot;./data/commodities_distribution.xlsx&quot;, range = &quot;A4:H297&quot;) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  rename(country = who_region_country_area) %&gt;% 
-  fill(country, .direction = &quot;down&quot;) %&gt;% 
-  filter(country %in% countries) %&gt;% 
-  nest(commodities_df = c(year:act_treatment_courses_delivered))</code></pre>
-<p>update complete_df</p>
-<pre class="r"><code>complete_df =
-  left_join(complete_df, commodities_df, by = &quot;country&quot;)</code></pre>
 
 
 
