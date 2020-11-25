@@ -116,18 +116,21 @@ complete_df_unnest =
 ```{r}
 complete_2_df_unnest =
   left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) %>% 
-  filter(year >= 2016) %>% 
   mutate(
-    prevalance = cases_point / population_at_risk,
-    prevalance_lower = cases_lower / population_at_risk,
-    prevalance_upper = cases_upper / population_at_risk,
+    prevalence = cases_point / population_at_risk,
+    prevalence_lower = cases_lower / population_at_risk,
+    prevalence_upper = cases_upper / population_at_risk,
     mortality = deaths_point / population_at_risk,
     mortality_lower = deaths_lower / population_at_risk,
     mortality_upper = deaths_upper / population_at_risk
   )
 ```
 
+What is the population malaria prevelance and mortality?
 ```{r}
-ggplot(complete_2_df_unnest, aes(x))
+ggplot(complete_2_df_unnest, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line() 
+
+ggplot(complete_2_df_unnest, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() 
 ```
 
+What percentage of those cases and deaths are attributed to pregnant women and children?
