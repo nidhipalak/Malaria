@@ -11,6 +11,7 @@ library(malariaAtlas)
 library(leaflet)
 library(ggridges)
 library(readxl)
+library(plotly)
 
 knitr::opts_chunk$set(
   fig.width=6,
@@ -31,7 +32,7 @@ scale_fill_discrete=scale_fill_viridis_d
 
 ```{r, include=FALSE}
 
-countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea")
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Algeria", "Argentina", "Iran", "Malaysia","Timor-Leste", "China", "El Salvador", "Cabo Verde")
 
 policy_pf_df = 
   read_excel(
@@ -128,9 +129,47 @@ complete_2_df_unnest =
 
 What is the population malaria prevelance and mortality?
 ```{r}
-ggplot(complete_2_df_unnest, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line() 
+ggplotly(ggplot(complete_2_df_unnest, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line())
 
-ggplot(complete_2_df_unnest, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() 
+ggplotly(ggplot(complete_2_df_unnest, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() )
 ```
 
-What percentage of those cases and deaths are attributed to pregnant women and children?
+Clean up data from STAT compiler household statistics
+```{r}
+household_stat_df =
+  read_excel(
+    "./data/household_survey_STAT.xls", range = "A4:T44", col_names = c("country", "source", "% of households with at least one ITN", "% of households with at least one ITN for every two persons who stayed in the household the previous night", "% of households with IRS in last 12 months", "% of households with at least one ITN and/or IRS in the past 12 months", "% of householdswith at least one ITN for every two persons and/or IRS in the past 12 months", "% of population with access to an ITN", "% of population who slept under an ITN last night", "% of ITNs that were used last night", "% of pregnant women who slept under an ITN", "% of pregnant women who took 3+ doses of IPTp", "% of children <5 years who slept under an ITN", "% of children <5 years with moderate or severe anaemia", "% of children <5 yearswith a positive RDT", "% of children <5 years with a positive microscopy blood smear", "% of children <5 years with fever in last 2 weeksfor whom advice or treatment was sought", "% of children <5 years with fever in last 2 weekswho had blood taken from a finger or heel for testing", "% of children <5 years with fever in last 2 weeks who took antimalarial drugs", "% of children <5 years with fever in last 2 weeks who took an ACT among those who received any antimalarial")) %>% 
+  janitor::clean_names() %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  pivot_longer(
+    percent_of_households_with_at_least_one_itn:percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial,
+    names_to = "preventative_measure",
+    values_to = "percentage"
+  ) %>% 
+  drop_na(percentage) %>% 
+  mutate(
+    percentage = as.numeric(percentage)
+  )
+```
+
+Does a household having an ITN improve prevalence/mortality of malaria?
+
+```{r}
+preventative_complete_df = 
+household_stat_df %>% 
+  filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
+  select(-preventative_measure) %>% 
+  rename(
+    percent_of_households_with_at_least_one_itn = percentage
+  ) %>% 
+  mutate(
+    source = 
+  )
+  right_join(complete_2_df_unnest, by = "country")
+```
+
+Does a pregnant woman sleeping under an ITN improve prevalence/mortality of malaria?
+
+Does a child under 5 sleeping under an ITN improve prevalence/mortality of malaria?
