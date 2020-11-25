@@ -76,9 +76,10 @@ estimate_cases_deaths_df =
   read_excel(
     "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
   janitor::clean_names() %>% 
-  filter(country %in% countries) %>% 
-  nest(pop_case_death_estimates_df = c(population_at_risk, cases_lower, cases_point, cases_upper, 
-    deaths_lower, deaths_point, deaths_upper))
+  filter(country %in% countries) 
+# %>% 
+#   nest(pop_case_death_estimates_df = c(population_at_risk, cases_lower, cases_point, cases_upper, 
+#     deaths_lower, deaths_point, deaths_upper))
 ```
 
 
@@ -110,5 +111,23 @@ complete_df_unnest =
   complete_df %>% 
   unnest(c(treatment_policies_df)) %>% 
   unnest(c(pop_case_death_estimates_df)) 
+```
+
+```{r}
+complete_2_df_unnest =
+  left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) %>% 
+  filter(year >= 2016) %>% 
+  mutate(
+    prevalance = cases_point / population_at_risk,
+    prevalance_lower = cases_lower / population_at_risk,
+    prevalance_upper = cases_upper / population_at_risk,
+    mortality = deaths_point / population_at_risk,
+    mortality_lower = deaths_lower / population_at_risk,
+    mortality_upper = deaths_upper / population_at_risk
+  )
+```
+
+```{r}
+ggplot(complete_2_df_unnest, aes(x))
 ```
 
