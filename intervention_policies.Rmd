@@ -161,27 +161,26 @@ household_stat_df %>%
     country = as.factor(country),
     country = fct_reorder(country, percent_of_households_with_at_least_one_itn)
   ) %>% 
-  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() 
+  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() + 
   
 ```
 
 Does a pregnant woman sleeping under an ITN improve prevalence/mortality of malaria?
 
-percent_of_pregnant_women_who_slept_under_an_itn
 
 
 ```{r}
 household_stat_df %>% 
-  filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
+  filter(preventative_measure == "percent_of_pregnant_women_who_slept_under_an_itn") %>% 
   select(-preventative_measure) %>% 
   rename(
-    percent_of_households_with_at_least_one_itn = percentage
+    percent_of_pregnant_women_who_slept_under_an_itn = percentage
   ) %>% 
   mutate(
     country = as.factor(country),
-    country = fct_reorder(country, percent_of_households_with_at_least_one_itn)
+    country = fct_reorder(country, percent_of_pregnant_women_who_slept_under_an_itn)
   ) %>% 
-  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() 
+  ggplot(aes(x = country, y = percent_of_pregnant_women_who_slept_under_an_itn)) + geom_point() 
   
 
 ```
