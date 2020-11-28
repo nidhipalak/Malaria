@@ -82,7 +82,16 @@ estimate_cases_deaths_df =
   read_excel(
     "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
   janitor::clean_names() %>% 
-  filter(country %in% countries) 
+  filter(country %in% countries) %>% 
+  select(-cases_lower, -cases_upper, -deaths_lower, -deaths_upper) %>% 
+  rename(
+    cases = cases_point,
+    deaths = deaths_point
+  ) %>% 
+  mutate(
+    prevalence = cases / population_at_risk,
+    mortality = deaths / population_at_risk
+  )
 ```
 
 ### Percentage of nets/act treatments (2016 - 2018)
@@ -99,15 +108,7 @@ commodities_df =
 ### Combine commodities and cases/deaths df
 ```{r}
 est_cases_commodities_df =
-  left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) %>% 
-  mutate(
-    prevalence = cases_point / population_at_risk,
-    prevalence_lower = cases_lower / population_at_risk,
-    prevalence_upper = cases_upper / population_at_risk,
-    mortality = deaths_point / population_at_risk,
-    mortality_lower = deaths_lower / population_at_risk,
-    mortality_upper = deaths_upper / population_at_risk
-  )
+  left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) 
 ```
 
 What is the population malaria prevelance and mortality?
@@ -133,23 +134,34 @@ household_stat_df =
   ) %>% 
   drop_na(percentage) %>% 
   mutate(
-    percentage = as.numeric(percentage)
-  )
+    percentage = as.numeric(percentage),
+    year = substr(source, 1, 4),
+   year = as.integer(year),
+   year_end = substr(source, 6, 7),
+   year_end = case_when(
+     str_detect(year_end, "[MDA][IH]") == TRUE ~ NA_character_,
+     str_detect(year_end, "[MDA][IH]") == FALSE ~ year_end
+  ),
+  year_end = str_c("20", year_end),
+  year_end = as.integer(year_end)
+  ) %>% 
+  select(-source)
+```
+
+```{r}
+itn_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_households_with_at_least_one_itn", 
+                                     "percent_of_pregnant_women_who_slept_under_an_itn",
+                                     "percent_of_children_5_years_who_slept_under_an_itn")) %>% 
+  pivot_wider(
+    names_from = preventative_measure,
+    values_from = percentage
+  ) %>% 
+  right_join(est_cases_commodities_df, by = c("country", "year"))
 ```
 
 Does a household having an ITN improve prevalence/mortality of malaria?
-
-```{r}
-itn_household_df = 
-household_stat_df %>% 
-  filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
-  select(-preventative_measure) %>% 
-  rename(
-    percent_of_households_with_at_least_one_itn = percentage
-  ) %>% 
-  right_join(est_cases_commodities_df, by = "country")
-```
-
 ```{r}
 household_stat_df %>% 
   filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
@@ -186,3 +198,17 @@ household_stat_df %>%
 ```
 
 Does a child under 5 sleeping under an ITN improve prevalence/mortality of malaria?
+
+```{r}
+itn_household_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_households_with_at_least_one_itn", 
+                                     "percent_of_pregnant_women_who_slept_under_an_itn",
+                                     "percent_of_children_5_years_who_slept_under_an_itn")) %>% 
+  select(-preventative_measure) %>% 
+  rename(
+    percent_of_households_with_at_least_one_itn = percentage
+  ) %>% 
+  right_join(est_cases_commodities_df, by = "country")
+```
+
