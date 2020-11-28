@@ -8,49 +8,10 @@ output:
 
 Introduction to Page
 
+While many countries in North America and parts of Europe have been able to eliminate the incidence of Malaria, many parts of the world are still plagued by this vector borne illness. In this section, we have gathered data on 19 countries of interest where the incidence rates of Malaria and Malaria mortality is high and we have used some statistical tools to analyze the data. The observation period spans years 2010 to 2018. 
+
+These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d'Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi. Most of these countries are located in sub-Saharan Africa and according to the World Health Organization, they bear the global burden of the disease.
+
 ### Prevalence
 
-```{r, message = FALSE, include = FALSE}
-library(tidyverse)
-library(readxl)
-library(plotly)
-```
-Population at risk estimated cases
-
-```{r, include = FALSE}
-countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
-
-```
-
-```{r, include = FALSE}
-pop_df = 
-  read_xls(
-    "./data/population_at_risk_estimated_cases_deaths.xls") %>%
-  select(1:6) %>%
-    rename(
-      region = Columna1,
-      country = Columna2,
-      year = Columna3,
-      pop_at_risk = Columna4,
-      cases_lower = Columna5,
-      cases_point = Columna6
-      ) %>%
-  select(-cases_lower) %>%
-    relocate(country, .before = region) %>%
-      filter(country %in% countries)
-
-pop_df[-1,]
-```
-
-
 ### Mortality
-
-Mortality dataset
-```{r, include = FALSE}
-mortality_df = 
-  read_csv(
-    "./data/mortality.csv") %>%
-    relocate(year, .after = region) %>% 
-          filter(country %in% countries, year %in% 2010:2018)
-```
-
