@@ -10,4 +10,47 @@ Introduction to Page
 
 ### Prevalence
 
+```{r, message = FALSE, include = FALSE}
+library(tidyverse)
+library(readxl)
+library(plotly)
+```
+Population at risk estimated cases
+
+```{r, include = FALSE}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
+
+```
+
+```{r, include = FALSE}
+pop_df = 
+  read_xls(
+    "./data/population_at_risk_estimated_cases_deaths.xls") %>%
+  select(1:6) %>%
+    rename(
+      region = Columna1,
+      country = Columna2,
+      year = Columna3,
+      pop_at_risk = Columna4,
+      cases_lower = Columna5,
+      cases_point = Columna6
+      ) %>%
+  select(-cases_lower) %>%
+    relocate(country, .before = region) %>%
+      filter(country %in% countries)
+
+pop_df[-1,]
+```
+
+
 ### Mortality
+
+Mortality dataset
+```{r, include = FALSE}
+mortality_df = 
+  read_csv(
+    "./data/mortality.csv") %>%
+    relocate(year, .after = region) %>% 
+          filter(country %in% countries, year %in% 2010:2018)
+```
+
