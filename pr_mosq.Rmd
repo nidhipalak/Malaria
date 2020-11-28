@@ -2,13 +2,35 @@
 title: "Disease Causes"
 output: 
   html_document:
+    code_folding: hide
     toc: true
     toc_float: true
 ---
 
+```{r setup, message = FALSE, warning = FALSE, include=FALSE}
+library(tidyverse)
+library(readxl)
+library(plotly)
+library(malariaAtlas)
+library(leaflet)
+library(ggridges)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
 Introduction to Page
 
-## Vectors: Mosquitoes
+# Vectors: Mosquitoes
 
 Over 3,500 species of mosquitoes grouped into 41 genera have been identified. Of these, Malaria is only transmitted by the female species of the genus Anopheles. To date, there are 430 species of this genus approximately, and of these only 30 to 40 of these species are vectors in nature that actually transmit Malaria.
 
@@ -17,31 +39,122 @@ Although these Malaria causing vectors are located in most regions of the world,
 
 Anopheles mosquitoes life cycle is egg, larva, pupa, and adult. The female mosquitoes (which transmit Malaria) use blood meals for their egg production. They obtain their blood meals from Humans, cattles etc. Unlike in humans, the parasite does not affect or cause mosquitoes to be ill therefore they are able to host the life cycle of the parasite. Ambient temperature, humidity and the life span of the mosquito also affect the life cycle of the parasite.
 
-## Causes: Parasite {.tabset .tabfade}
+## Mosquito species across Africa
+```{r, include=FALSE}
+Africa_vec_data = 
+  getVecOcc(continent = "Africa") %>% 
+  as_tibble()
+```
+
+```{r, warning = FALSE, message=FALSE}
+pal = colorFactor("viridis", Africa_vec_data %>% pull(species_plain))
+Africa_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5
+  )
+```
+
+## Mosquito species across Asia
+Note: Only plot species with observations > 15
+```{r, include=FALSE}
+Asia_vec_data = 
+  getVecOcc(continent = "Asia") %>% 
+  as_tibble()
+```
+
+```{r, warning = FALSE, message=FALSE}
+pal2 = colorFactor("viridis", Asia_vec_data %>% pull(species_plain))
+Asia_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  filter(n > 15) %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal2(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal2, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5,
+    position = "bottomleft"
+  ) 
+```
+
+# Causes: Parasite {.tabset .tabfade}
 
 
 Malaria is caused by a microorganism from the genus Plasmodium. The five identified species known to cause Malaria in humans are: _P. falciparum_, _P. vivax_, _P. ovale_, _P. malariae_, _P. knowlesi_. In our data collection, we focused more on _P. falciparum_ and _P. vivax_ because they are the two common species in our countries of interest (these countries are selected based on their high Malaria incidence and mortality rates. They are classified by WHO as critical countries).
 
-### _P. falciparum_
+## _P. falciparum_
 
 The _P. falciparum_ species are more predominant in tropical and subtropical regions of the world, especially in Africa. These species are one of the deadliest because of their ability to multiply rapidly in the blood, resulting in severe blood loss. they can also obstruct small blood vessels leading to a fatal complication described as "Cerebral Malaria".
 
-### _P. vivax_
+## _P. vivax_
 
 The _P. vivax_ species are more common in Asia and in parts of South America. These species are also dangerous because they have a hypnozoites (dormant) stage after which they can become activated in the blood, causing the disease to resurface months or even years after the initial mosquito bite. 
 
-### _P. ovale_
+## _P. ovale_
 
 _P. ovale_ are mostly found in Africa because it majorly infects people who are negative for the Duffy blood group.(The frequency of blacks with this blood group is lower than in other racial groups).
 
-### _P. malariae_
+## _P. malariae_
 
 _P. malariae_ are more widespread than the other plasmodium species. Unlike the other species, they have a three-day life cycle and can potentially cause a chronic life long Malaria if left untreated.
 
-### _P. knowlesi_
+## _P. knowlesi_
 
 _P. knowlesi_ common in South east Asia and known to infect Macaques have recently been added to the list of significant causes of zoonotic Malaria in that region. Some severe cases have been recorded, and the short life cycle of these species make it quite easy for the illness to progress rapidly from a mild to severe case.
 
+#
+
+### Confirmed cases by Parasite Species
+
+```{r, warning = FALSE, include=FALSE}
+confirm_df = 
+  read_xls(
+    "./data/reported_cases_by_species.xls", range = "A4:K502") %>% 
+  filter(str_detect(
+    Year, "P. falciparum|P. vivax"
+  )) %>% 
+  pivot_longer(
+    cols = "2010":"2018",
+    names_to = "years",
+    values_to = "cases"
+  ) %>% 
+  janitor::clean_names() %>% 
+  rename(species = year,
+         country = who_region_country_area)
+```
+
+A plot of different countries across years.  
+Countries of interest:  
+Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi.  
+Click the countries that you want to show!
+```{r, warning = FALSE, include=FALSE}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
+by_country = 
+  confirm_df %>% 
+  filter(country %in% countries) %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. falciparum" ~ "P. falciparum")) %>% 
+  drop_na(species)
+```
 
 
+```{r, warning = FALSE}
+by_country %>% 
+  mutate(
+    text_label = str_c("Year: ", years, "\nCases: ", cases)
+  ) %>% 
+  plot_ly(
+    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    color = ~country, text = ~text_label, alpha = 0.5
+  ) %>% 
+ style(visible = "legendonly")
+```
 
