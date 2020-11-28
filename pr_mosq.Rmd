@@ -15,10 +15,21 @@ Over 3,500 species of mosquitoes grouped into 41 genera have been identified. Of
 Although these Malaria causing vectors are located in most regions of the world, there are often different species that are indigenous and more common than others in different regions of the world. (This poses a risk of re-occurrence in regions where Malaria has been eliminated)
 
 
-Anopheles mosquitoes life cycle is egg, larva, pupa, and adult. The female mosquitoes (which transmit Malaria) use blood meals for their egg production. They obtain their blood meals from Humans, cattles etc. Unlike in humans, the parasite does not affect or cause mosquitoes to be ill therefore they are able to host the life cyle of the parasite. Ambient temperature, humidity and the life span of the mosquito also affect the life cycle of the parasite.
+Anopheles mosquitoes life cycle is egg, larva, pupa, and adult. The female mosquitoes (which transmit Malaria) use blood meals for their egg production. They obtain their blood meals from Humans, cattles etc. Unlike in humans, the parasite does not affect or cause mosquitoes to be ill therefore they are able to host the life cycle of the parasite. Ambient temperature, humidity and the life span of the mosquito also affect the life cycle of the parasite.
 
 ### Causes: Parasite
 
+Malaria is caused by a microorganism from the genus Plasmodium. The five identified species known to cause Malaria in humans are: _P.falciparum_, _P.vivax_, _P.ovale_, _P.malariae_, _P.knowlesi_.
 
+The _P.falciparum_ species are more predominant in tropical and subtropical regions of the world, especially in Africa. This specie is one of the deadliest because of its ability to multiply rapidly in the blood, resulting in severe blood loss. It can also obstruct small blood vessels leading to a fatal complication described as "Cerebral Malaria".
 
+The _p.vivax_ species are more common in Asia and in parts of South America. These species are also dangerous because they have a hypnozoites (dormant) stage after which they can become activated in the blood, causing the disease to resurface months or even years after the initial mosquito bite. 
+
+_P.ovale_ are mostly found in Africa because it majorly infects people who are negative for the Duffy blood group.(The frequency of blacks with this blood group is lower than in other racial groups).
+
+_P.malariae_ are more widespread than the other plasmodium species. Unlike the other species, they have a three-day life cycle and can potentially cause a chronic life long Malaria if left untreated.
+
+_P.knowlesi_ common in South east Asia and known to infect Macaques have recently been added to the list of significant causes of zoonotic Malaria in that region. Some severe cases have been recorded, and the short life cycle of these species make it quite easy to progress rapidly from a mild to severe case.
+
+In our data collection, we focused more on _P.falciparum_ and _P.vivax_ because they are the two common species in our countries of interest (these countries are selected based on their high Malaria incidence and mortality rates. They are classified by WHO as critical countries).
 
