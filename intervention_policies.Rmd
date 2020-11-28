@@ -34,6 +34,10 @@ scale_fill_discrete=scale_fill_viridis_d
 
 countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Algeria", "Argentina", "Iran", "Malaysia","Timor-Leste", "China", "El Salvador", "Cabo Verde")
 
+```
+
+### Drug treatment policies in 2018
+```{r, include=FALSE}
 policy_pf_df = 
   read_excel(
     "./data/antimalarial_drug_policy.xlsx", range = "A4:E105") %>% 
@@ -72,26 +76,16 @@ policy_pf_df %>%
 
 ```
 
+### Estimated cases and deaths
 ```{r, include=FALSE}
 estimate_cases_deaths_df = 
   read_excel(
     "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
   janitor::clean_names() %>% 
   filter(country %in% countries) 
-# %>% 
-#   nest(pop_case_death_estimates_df = c(population_at_risk, cases_lower, cases_point, cases_upper, 
-#     deaths_lower, deaths_point, deaths_upper))
 ```
 
-
-```{r, include=FALSE}
-
-complete_df = 
-  left_join(policy_pf_df, estimate_cases_deaths_df, by = "country") %>% 
-  select(who_region, country, year, treatment_policies_df, pop_case_death_estimates_df)
-  
-```
-
+### Percentage of nets/act treatments (2016 - 2018)
 ```{r, include=FALSE}
 commodities_df =
   read_excel(
@@ -102,20 +96,9 @@ commodities_df =
   filter(country %in% countries) 
 ```
 
-```{r, include=FALSE}
-complete_df =
-  left_join(complete_df, commodities_df, by = c("country","year"))
-```
-
+### Combine commodities and cases/deaths df
 ```{r}
-complete_df_unnest = 
-  complete_df %>% 
-  unnest(c(treatment_policies_df)) %>% 
-  unnest(c(pop_case_death_estimates_df)) 
-```
-
-```{r}
-complete_2_df_unnest =
+est_cases_commodities_df =
   left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) %>% 
   mutate(
     prevalence = cases_point / population_at_risk,
@@ -129,12 +112,12 @@ complete_2_df_unnest =
 
 What is the population malaria prevelance and mortality?
 ```{r}
-ggplotly(ggplot(complete_2_df_unnest, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line())
+ggplotly(ggplot(est_cases_commodities_df, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line())
 
-ggplotly(ggplot(complete_2_df_unnest, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() )
+ggplotly(ggplot(est_cases_commodities_df, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() )
 ```
 
-Clean up data from STAT compiler household statistics
+### Clean up data from STAT compiler household statistics (2015 - 2018)
 ```{r}
 household_stat_df =
   read_excel(
@@ -157,14 +140,14 @@ household_stat_df =
 Does a household having an ITN improve prevalence/mortality of malaria?
 
 ```{r}
-preventative_complete_df = 
+itn_household_df = 
 household_stat_df %>% 
   filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
   select(-preventative_measure) %>% 
   rename(
     percent_of_households_with_at_least_one_itn = percentage
   ) %>% 
-  right_join(complete_2_df_unnest, by = "country")
+  right_join(est_cases_commodities_df, by = "country")
 ```
 
 ```{r}
@@ -183,5 +166,24 @@ household_stat_df %>%
 ```
 
 Does a pregnant woman sleeping under an ITN improve prevalence/mortality of malaria?
+
+percent_of_pregnant_women_who_slept_under_an_itn
+
+
+```{r}
+household_stat_df %>% 
+  filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
+  select(-preventative_measure) %>% 
+  rename(
+    percent_of_households_with_at_least_one_itn = percentage
+  ) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, percent_of_households_with_at_least_one_itn)
+  ) %>% 
+  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() 
+  
+
+```
 
 Does a child under 5 sleeping under an ITN improve prevalence/mortality of malaria?
