@@ -117,9 +117,9 @@ est_cases_commodities_df =
 
 What is the population malaria prevelance and mortality?
 ```{r}
-ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line())
+ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = prevalence, color = country)) + geom_line())
 
-ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() )
+ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = mortality, color = country)) + geom_line() )
 ```
 
 ### Clean up data from STAT compiler household statistics (2015 - 2018)
@@ -296,11 +296,7 @@ burden %>%
   filter(country %in% countries) %>% 
   drop_na(estimated_nets) %>% 
   select(-low_est_death, -high_est_death, -low_est_cases, -high_est_cases, -low_est_nets,-high_est_nets) %>% 
-  filter(residence_area == "Total") %>% 
-  mutate(
-    country = as.factor(country),
-    country = fct_reorder(country)
-  )
+  filter(residence_area == "Total") 
 ```
 
 ```{r}
