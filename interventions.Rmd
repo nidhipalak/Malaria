@@ -282,7 +282,3 @@ fit_drug_mort = lm(mortality*100 ~ percent_of_children_5_years_with_fever_in_las
 fit_irs_mort %>% 
   knitr::kable(caption = "Linear relationship: mortality and ACT usage among children under 5")
 ```
-
-
-
-
