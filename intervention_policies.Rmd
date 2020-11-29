@@ -12,6 +12,7 @@ library(leaflet)
 library(ggridges)
 library(readxl)
 library(plotly)
+library(patchwork)
 
 knitr::opts_chunk$set(
   fig.width=6,
@@ -155,92 +156,83 @@ itn_df =
 household_stat_df %>% 
   filter(preventative_measure %in% c("percent_of_households_with_at_least_one_itn", 
                                      "percent_of_pregnant_women_who_slept_under_an_itn",
-                                     "percent_of_children_5_years_who_slept_under_an_itn")) %>% 
+                                    "percent_of_children_5_years_who_slept_under_an_itn")) %>% 
   pivot_wider(
     names_from = preventative_measure,
     values_from = percentage
   ) %>% 
-  right_join(estimate_cases_deaths_df, by = c("country", "year"))
-```
-
-
-```{r}
-filtered_itn_df =
-itn_df %>% 
+  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
   drop_na(percent_of_households_with_at_least_one_itn) %>% 
   mutate(
     country = as.factor(country),
     country = fct_reorder(country, prevalence)
   ) 
+```
 
+## Children under an ITN
+```{r}
+children_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence, color = country)) +
+  geom_point(aes(y = percent_of_children_5_years_who_slept_under_an_itn)) + 
+  labs(title = "ITN Usage: Children <5 Years Age",x = "Prevalence", y= "% ITN Usage"
+  ) + theme(legend.position = "none")
+```
 
-  ggplot(filtered_itn_df,aes(x = country)) +
-  geom_point(aes(y = prevalence*100), color = "black") +
-  # geom_line(aes(y = mortality), color = "red", linetype = "twodash") +
-  geom_point(aes(y = percent_of_households_with_at_least_one_itn), color = "darkred", linetype = "twodash") +
-  geom_point(aes(y = percent_of_pregnant_women_who_slept_under_an_itn), color = "blue", linetype = "dash")
+## Pregnant women under an ITN
+```{r}
+preg_women_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence, color = country)) +
+  geom_point(aes(y = percent_of_pregnant_women_who_slept_under_an_itn)) + 
+  labs(title = "ITN Usage: Pregnant Women",x = "Prevalence", y= "% ITN Usage"
+  ) + theme(legend.position = "none")
+```
+
+## Households under an ITN
+```{r}
+household_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence, color = country)) +
+  geom_point(aes(y = percent_of_households_with_at_least_one_itn)) + 
+  labs(title = "ITN Usage: Households",x = "Prevalence", y= "% ITN Usage"
+  ) + theme(legend.position = "none")
 ```
 
 ```{r}
-
-filtered_itn_df %>% 
-  drop_na(percent_of_households_with_at_least_one_itn) %>% 
-  mutate(
-    country = as.factor(country),
-    country = fct_reorder(country, prevalence)
-  ) %>% 
-  ggplot(aes(x = percent_of_pregnant_women_who_slept_under_an_itn, color = mortality*100)) +
-  geom_point(aes(y = percent_of_children_5_years_who_slept_under_an_itn)) 
+household_itn / preg_women_itn / children_itn
 ```
 
-Does a household having an ITN improve prevalence/mortality of malaria?
+## Children under an ITN
 ```{r}
-household_stat_df %>% 
-  filter(preventative_measure == "percent_of_households_with_at_least_one_itn") %>% 
-  select(-preventative_measure) %>% 
-  rename(
-    percent_of_households_with_at_least_one_itn = percentage
-  ) %>% 
-  mutate(
-    country = as.factor(country),
-    country = fct_reorder(country, percent_of_households_with_at_least_one_itn)
-  ) %>% 
-  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() 
-  
+children_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality, color = country)) +
+  geom_point(aes(y = percent_of_children_5_years_who_slept_under_an_itn)) + 
+  labs(title = "ITN Usage: Children <5 Years Age",x = "Mortality", y= "% ITN Usage"
+  ) + theme(legend.position = "none")
 ```
 
-Does a pregnant woman sleeping under an ITN improve prevalence/mortality of malaria?
-
-
-
+## Pregnant women under an ITN
 ```{r}
-household_stat_df %>% 
-  filter(preventative_measure == "percent_of_pregnant_women_who_slept_under_an_itn") %>% 
-  select(-preventative_measure) %>% 
-  rename(
-    percent_of_pregnant_women_who_slept_under_an_itn = percentage
-  ) %>% 
-  mutate(
-    country = as.factor(country),
-    country = fct_reorder(country, percent_of_pregnant_women_who_slept_under_an_itn)
-  ) %>% 
-  ggplot(aes(x = country, y = percent_of_pregnant_women_who_slept_under_an_itn)) + geom_point() 
-  
-
+preg_women_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality, color = country)) +
+  geom_point(aes(y = percent_of_pregnant_women_who_slept_under_an_itn)) + 
+  labs(title = "ITN Usage: Pregnant Women",x = "Mortality", y= "% ITN Usage"
+  ) + theme(legend.position = "none")
 ```
 
-Does a child under 5 sleeping under an ITN improve prevalence/mortality of malaria?
+## Households under an ITN
+```{r}
+household_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality, color = country)) +
+  geom_point(aes(y = percent_of_households_with_at_least_one_itn)) + 
+  labs(title = "ITN Usage: Households",x = "Mortality", y= "% ITN Usage"
+  ) + theme(legend.position = "none")
+```
 
 ```{r}
-itn_household_df = 
-household_stat_df %>% 
-  filter(preventative_measure %in% c("percent_of_households_with_at_least_one_itn", 
-                                     "percent_of_pregnant_women_who_slept_under_an_itn",
-                                     "percent_of_children_5_years_who_slept_under_an_itn")) %>% 
-  select(-preventative_measure) %>% 
-  rename(
-    percent_of_households_with_at_least_one_itn = percentage
-  ) %>% 
-  right_join(est_cases_commodities_df, by = "country")
+household_itn_mort / preg_women_itn_mort / children_itn_mort
 ```
-
