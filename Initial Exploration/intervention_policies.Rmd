@@ -508,14 +508,18 @@ d_drug_prev + d_drug_mort
 ```
 
 ```{r}
-unicef_df = read_csv("./data/unicef.csv") %>% 
+indicators = c("ITN use by children - percentage of children (under age 5) who slept under an insecticide-treated mosquito net the night prior to the survey","Infant mortality rate", "Under-five mortality rate","IPTp for pregnant women - percentage of women (aged 15-49 years) who received three or more doses of intermittent preventive treatment during antenatal care visits during their last pregnancy","ITN use by children - percentage of children (under age 5) who slept under an insecticide-treated mosquito net the night prior to the survey","Household with insecticide treated net (ITN) and/or indoor residual spraying (IRS) - percentage of households with at least one ITN for every two persons and/or IRS in the past 12 months","Percentage of households with at least one insecticide-treated mosquito net (ITN)","Pregnant women sleeping under ITN - percentage of pregnant women (aged 15-49 years) who slept under an insecticide-treated net the previous night","Malaria, first line treatment - percentage of febrile children (under age 5) receiving ACT (first line antimalarial drug), among those receiving any antimalarial drugs", "Careseeking for febrile children - percentage of children (under age 5) with fever for whom advice or treatment was sought from a health facility or provider","Malaria diagnostics - percentage of febrile children (under age 5) who had a finger or heel stick for malaria testing")
+```
+
+```{r}
+unicef_df = read_csv("./data/unicef_2.csv") %>% 
    janitor::clean_names() %>% 
    rename(
      country = geographic_area
    )   %>% 
    filter(
-     country %in% countries,
-     indicator %in% indicators
+     country %in% countries
+     #indicator %in% indicators
    ) %>% 
    select(country, indicator, time_period, obs_value) %>% 
    rename(
@@ -530,3 +534,101 @@ unicef_df = read_csv("./data/unicef.csv") %>%
    write_csv("./data/unicef.csv")
 ```
 
+```{r}
+unicef_df = read_csv("./data/unicef.csv")
+```
+
+```{r}
+ggplot(unicef_df, aes(x = year, y = under_five_mortality_rate, color = country)) + geom_point() + geom_line()
+
+ggplotly(ggplot(unicef_df, aes(x = year, y = itn_use_by_children_percentage_of_children_under_age_5_who_slept_under_an_insecticide_treated_mosquito_net_the_night_prior_to_the_survey, color = country)) + geom_point() + geom_line())
+
+ggplotly(ggplot(unicef_df, aes(x = year, y = percentage_of_households_with_at_least_one_insecticide_treated_mosquito_net_itn, color = country)) + geom_point() + geom_line())
+
+ggplotly(ggplot(unicef_df, aes(x = year, y = malaria_first_line_treatment_percentage_of_febrile_children_under_age_5_receiving_act_first_line_antimalarial_drug_among_those_receiving_any_antimalarial_drugs, color = country)) + geom_point() + geom_line())
+```
+
+```{r}
+owi_mortality_rates_df = read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+    under_5_mortality_rate = deaths_malaria_sex_both_age_under_5_rate,
+    all_ages_mortality_rate = deaths_malaria_sex_both_age_all_ages_rate,
+    age_5_14_years_mortality_rate = deaths_malaria_sex_both_age_5_14_years_rate,
+    age_15_49_years_mortality_rate = deaths_malaria_sex_both_age_15_49_years_rate,
+    age_50_69_years_mortality_rate = deaths_malaria_sex_both_age_50_69_years_rate,
+    age_70_years_mortality_rate = deaths_malaria_sex_both_age_70_years_rate,
+    age_standardized_mortality_rate = deaths_malaria_sex_both_age_age_standardized_rate,
+    country = entity
+  ) %>% 
+select(-code)
+```
+
+```{r}
+owi_mortality_rates_df_longer = 
+  read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names()  %>% 
+  pivot_longer(
+    deaths_malaria_sex_both_age_under_5_rate:deaths_malaria_sex_both_age_age_standardized_rate,
+    names_to = "age_group",
+    names_prefix = "deaths_malaria_sex_both_age_",
+    values_to = "mortality_rate"
+  )
+```
+
+```{r}
+owi_mortality_rates_df_longer %>% 
+  group_by(year, age_group) %>%
+  summarize(avg_mortality_rate = mean(mortality_rate)) %>% 
+  mutate(
+    age_group = factor(age_group, levels = c("under_5_rate","5_14_years_rate", "15_49_years_rate",
+                                                  "50_69_years_rate","70_years_rate",
+                                                  "age_standardized_rate","all_ages_rate"))
+  ) %>% 
+  ggplot(aes(x=year, y = avg_mortality_rate, color = age_group)) + geom_point() + geom_line()  + theme(legend.position = "right" )+ labs(title = "Malaria Mortality Rates by Age Group", x = "Year", y = "Mortality Rate (%)", color = "Age Group")
+```
+
+```{r}
+children_itn_df = read_csv("./data/children-sleeping-under-treated-bednet.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+```
+
+```{r}
+household_itn_df = read_csv("./data/households-with-at-least-one-itn.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+```
+
+```{r}
+complete_df =
+  owi_mortality_rates_df %>% 
+  left_join(children_itn_df, by = c("country","year")) %>% 
+  left_join(household_itn_df, by = c("country","year"))
+
+
+```
+
+```{r}
+complete_df %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population) %>% 
+ggplot(aes(x = year, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() +geom_line()
+```
+
+```{r}
+complete_df %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population) %>% 
+ggplot(aes(x = under_5_mortality_rate, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() +geom_line() + stat_smooth(method = "lm") + facet_wrap(country ~.)
+```
