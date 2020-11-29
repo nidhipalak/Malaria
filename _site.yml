@@ -8,7 +8,7 @@ navbar:
     - text: "Causes"
       href: pr_mosq.html
     - text: "Correlations"
-      href: weather.html
+      href: weather_patterns.html
     - text: "Interventions"
       href: interventions.html
 
