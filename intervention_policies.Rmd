@@ -105,6 +105,8 @@ commodities_df =
   filter(country %in% countries) 
 ```
 
+Commodities data is short and is not normalized relative to population. Use the household stats data instead
+
 ### Combine commodities and cases/deaths df
 ```{r}
 est_cases_commodities_df =
@@ -113,9 +115,9 @@ est_cases_commodities_df =
 
 What is the population malaria prevelance and mortality?
 ```{r}
-ggplotly(ggplot(est_cases_commodities_df, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line())
+ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = prevalence, color = country)) + geom_point() + geom_line())
 
-ggplotly(ggplot(est_cases_commodities_df, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() )
+ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = mortality, color = country)) + geom_point() + geom_line() )
 ```
 
 ### Clean up data from STAT compiler household statistics (2015 - 2018)
@@ -158,7 +160,12 @@ household_stat_df %>%
     names_from = preventative_measure,
     values_from = percentage
   ) %>% 
-  right_join(est_cases_commodities_df, by = c("country", "year"))
+  right_join(estimate_cases_deaths_df, by = c("country", "year"))
+```
+
+
+```{r}
+
 ```
 
 Does a household having an ITN improve prevalence/mortality of malaria?
@@ -173,7 +180,7 @@ household_stat_df %>%
     country = as.factor(country),
     country = fct_reorder(country, percent_of_households_with_at_least_one_itn)
   ) %>% 
-  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() + 
+  ggplot(aes(x = country, y = percent_of_households_with_at_least_one_itn)) + geom_point() 
   
 ```
 
