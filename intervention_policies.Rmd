@@ -95,7 +95,7 @@ estimate_cases_deaths_df =
   )
 ```
 
-### Percentage of nets/act treatments (2016 - 2018)
+### # of nets/act treatments (2016 - 2018)
 ```{r, include=FALSE}
 commodities_df =
   read_excel(
@@ -109,6 +109,7 @@ commodities_df =
 Commodities data is short and is not normalized relative to population. Use the household stats data instead
 
 ### Combine commodities and cases/deaths df
+This dataset wasnt useful
 ```{r}
 est_cases_commodities_df =
   left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) 
@@ -169,34 +170,54 @@ household_stat_df %>%
   ) 
 ```
 
+Function to make ITN graphs versus prevalence
+```{r}
+itn_graphs = function(df, xaxis, yaxis) {
+
+    ggplot(df,aes(x = xaxis, y = yaxis)) +
+    geom_point() + 
+    labs(x = "Prevalence", y= "% ITN Usage"
+    ) + theme(legend.position = "none")
+}
+```
+
+Graph Function doesnt work!
+```{r}
+children_itn = 
+  itn_graphs(df = itn_df, xaxis = prevalence, yaxis = percent_of_children_5_years_who_slept_under_an_itn)
+```
+
 ## Children under an ITN
 ```{r}
 children_itn = 
 itn_df %>% 
-  ggplot(aes(x = prevalence, color = country)) +
-  geom_point(aes(y = percent_of_children_5_years_who_slept_under_an_itn)) + 
+  ggplot(aes(x = prevalence, y = percent_of_children_5_years_who_slept_under_an_itn)) +
+  geom_point() + 
   labs(title = "ITN Usage: Children <5 Years Age",x = "Prevalence", y= "% ITN Usage"
-  ) + theme(legend.position = "none")
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
 ```
 
 ## Pregnant women under an ITN
 ```{r}
 preg_women_itn = 
 itn_df %>% 
-  ggplot(aes(x = prevalence, color = country)) +
-  geom_point(aes(y = percent_of_pregnant_women_who_slept_under_an_itn)) + 
+  ggplot(aes(x = prevalence, y = percent_of_pregnant_women_who_slept_under_an_itn)) +
+  geom_point() + 
   labs(title = "ITN Usage: Pregnant Women",x = "Prevalence", y= "% ITN Usage"
-  ) + theme(legend.position = "none")
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
 ```
 
 ## Households under an ITN
 ```{r}
 household_itn = 
 itn_df %>% 
-  ggplot(aes(x = prevalence, color = country)) +
-  geom_point(aes(y = percent_of_households_with_at_least_one_itn)) + 
+  ggplot(aes(x = prevalence, y = percent_of_households_with_at_least_one_itn)) +
+  geom_point() + 
   labs(title = "ITN Usage: Households",x = "Prevalence", y= "% ITN Usage"
-  ) + theme(legend.position = "none")
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
 ```
 
 ```{r}
@@ -207,32 +228,89 @@ household_itn / preg_women_itn / children_itn
 ```{r}
 children_itn_mort = 
 itn_df %>% 
-  ggplot(aes(x = mortality, color = country)) +
-  geom_point(aes(y = percent_of_children_5_years_who_slept_under_an_itn)) + 
+  ggplot(aes(x = mortality, y = percent_of_children_5_years_who_slept_under_an_itn)) +
+  geom_point() + 
   labs(title = "ITN Usage: Children <5 Years Age",x = "Mortality", y= "% ITN Usage"
-  ) + theme(legend.position = "none")
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
 ```
 
 ## Pregnant women under an ITN
 ```{r}
 preg_women_itn_mort = 
 itn_df %>% 
-  ggplot(aes(x = mortality, color = country)) +
-  geom_point(aes(y = percent_of_pregnant_women_who_slept_under_an_itn)) + 
+  ggplot(aes(x = mortality, y = percent_of_pregnant_women_who_slept_under_an_itn)) +
+  geom_point() + 
   labs(title = "ITN Usage: Pregnant Women",x = "Mortality", y= "% ITN Usage"
-  ) + theme(legend.position = "none")
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
 ```
 
 ## Households under an ITN
 ```{r}
 household_itn_mort = 
 itn_df %>% 
-  ggplot(aes(x = mortality, color = country)) +
-  geom_point(aes(y = percent_of_households_with_at_least_one_itn)) + 
+  ggplot(aes(x = mortality, y = percent_of_households_with_at_least_one_itn)) +
+  geom_point() + 
   labs(title = "ITN Usage: Households",x = "Mortality", y= "% ITN Usage"
-  ) + theme(legend.position = "none")
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
 ```
 
 ```{r}
 household_itn_mort / preg_women_itn_mort / children_itn_mort
+```
+
+### Burden data from 2007 - 2012
+```{r}
+burden = read_csv("./data/malariawho.csv")
+```
+
+```{r}
+burden_countries =
+burden %>% 
+  filter(country %in% countries) %>% 
+  drop_na(estimated_nets) %>% 
+  select(-low_est_death, -high_est_death, -low_est_cases, -high_est_cases, -low_est_nets,-high_est_nets) %>% 
+  filter(residence_area == "Total") %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country)
+  )
+```
+
+```{r}
+burden_itn =
+  burden_countries %>% 
+  ggplot(aes(x=incidence_per1000, y = estimated_nets)) + geom_point()
+```
+
+### Perform linear regression on ITN models with prevalence
+
+```{r}
+fit_children_prev = lm(prevalence*100 ~ percent_of_children_5_years_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_preg_prev = lm(prevalence*100 ~ percent_of_pregnant_women_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_household_prev = lm(prevalence*100 ~ percent_of_households_with_at_least_one_itn, data = itn_df) %>% 
+  broom::tidy()
+
+prev_fits = bind_rows(fit_children_prev, fit_preg_prev, fit_household_prev) %>% filter(term != "(Intercept)")
+```
+
+### Perform linear regression on ITN models with mortality
+
+```{r}
+fit_children_mort = lm(mortality*100 ~ percent_of_children_5_years_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_preg_mort = lm(mortality*100 ~ percent_of_pregnant_women_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_household_mort = lm(mortality*100 ~ percent_of_households_with_at_least_one_itn, data = itn_df) %>% 
+  broom::tidy()
+
+mort_fits = bind_rows(fit_children_mort, fit_preg_mort, fit_household_mort) %>% filter(term != "(Intercept)")
 ```
