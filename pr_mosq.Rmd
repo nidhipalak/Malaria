@@ -133,6 +133,11 @@ confirm_df =
 A plot of different countries across years.  
 Countries of interest:  
 Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi.  
+
+
+The interactive plot below shows the distribution of Malaria cases for some of the countries of interest (some countries have missing data) between year 2010 and year 2018. For most of the countries in the sub_Saharan African region, the majority of the Malaria cases were caused by _P. falciparum_ species. For India however, the Malaria cases caused by both _P. falciparum_ and _P. vivax_ were quite similar.  
+
+
 Click the countries that you want to show!
 ```{r, warning = FALSE, include=FALSE}
 countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
@@ -155,6 +160,27 @@ by_country %>%
     x = ~years, y = ~cases, type = "scatter", mode = "lines",
     color = ~country, text = ~text_label, alpha = 0.5
   ) %>% 
- style(visible = "legendonly")
+  layout(title = 'Confirmed cases by P. falciparum') %>% 
+  style(visible = "legendonly")
 ```
 
+```{r, warning = FALSE, include=FALSE}
+by_india = 
+  confirm_df %>% 
+  filter(country %in% "India") %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. vivax" ~ "P. vivax")) %>% 
+  drop_na(species)
+```
+
+```{r, warning = FALSE}
+by_india %>% 
+  mutate(
+    text_label = str_c("Year: ", years, "\nCases: ", cases)
+  ) %>% 
+  plot_ly(
+    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    color = ~country, text = ~text_label, alpha = 0.5) %>% 
+  layout(title = 'Confirmed cases by P. vivax in India')
+```
