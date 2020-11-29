@@ -8,9 +8,9 @@ output:
 
 Introduction to Page
 
-While many countries in North America and parts of Europe have been able to eliminate the incidence of Malaria, many parts of the world are still plagued by this vector borne illness. In this section, we have gathered data on 19 countries of interest where the incidence rates of Malaria and Malaria mortality is high and we have used some statistical tools to analyze the data. The observation period spans years 2010 to 2018. 
+While many countries in North America and parts of Europe have been able to eliminate the incidence of Malaria, many parts of the world are still plagued by this vector borne illness.  
 
-These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d'Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi. Most of these countries are located in sub-Saharan Africa and according to the World Health Organization, they bear the global burden of the disease.
+
 
 ### Prevalence
 
