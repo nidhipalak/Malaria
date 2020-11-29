@@ -2,7 +2,7 @@
 title: "Proposal"
 author: "Team Malaria"
 date: "11/6/2020"
-output: github_document
+output: html_document
 ---
 
 **The group members**
