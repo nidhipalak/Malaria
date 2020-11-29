@@ -249,5 +249,6 @@ continent_vec_data %>%
   #  title = "Mosquito Species",
   #  opacity = 0.5
  # )
+
 ```
 

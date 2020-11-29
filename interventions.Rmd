@@ -1,0 +1,35 @@
+---
+title: "Disease Interventions"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+## Prevention
+
+Vector control is the main way to prevent and reduce malaria transmission. If coverage of vector control interventions within a specific area is high enough, then a measure of protection will be conferred across the community.
+
+WHO recommends protection for all people at risk of malaria with effective malaria vector control. Two forms of vector control – insecticide-treated mosquito nets and indoor residual spraying – are effective in a wide range of circumstances.
+
+### Insecticide Treated Mosquito Nets
+
+Sleeping under an insecticide-treated net (ITN) can reduce contact between mosquitoes and humans by providing both a physical barrier and an insecticidal effect. Population-wide protection can result from the killing of mosquitoes on a large scale where there is high access and usage of such nets within a community.
+
+### Indoor Spraying with residual insecticides
+
+Indoor residual spraying (IRS) with insecticides is another powerful way to rapidly reduce malaria transmission. It involves spraying the inside of housing structures with an insecticide, typically once or twice per year. To confer significant community protection, IRS should be implemented at a high level of coverage.
+
+Globally, IRS protection declined from a peak of 5% in 2010 to  2% in 2018, with decreases seen across all WHO regions, apart from the WHO Eastern Mediterranean Region. The declines in IRS coverage are occurring as countries switch from pyrethroid insecticides to more expensive alternatives to mitigate mosquito resistance to pyrethroids. 
+
+### Antimalarial drugs
+
+Antimalarial medicines can also be used to prevent malaria. For travellers, malaria can be prevented through chemoprophylaxis, which suppresses the blood stage of malaria infections, thereby preventing malaria disease. For pregnant women living in moderate-to-high transmission areas, WHO recommends intermittent preventive treatment with sulfadoxine-pyrimethamine, at each scheduled antenatal visit after the first trimester. Similarly, for infants living in high-transmission areas of Africa, 3 doses of intermittent preventive treatment with sulfadoxine-pyrimethamine are recommended, delivered alongside routine vaccinations.
+
+Since 2012, WHO has recommended seasonal malaria chemoprevention as an additional malaria prevention strategy for areas of the Sahel sub-region of Africa. The strategy involves the administration of monthly courses of amodiaquine plus sulfadoxine-pyrimethamine to all children under 5 years of age during the high transmission season.
+
+
+
+
+
+

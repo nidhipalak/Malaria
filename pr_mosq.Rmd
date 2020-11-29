@@ -1,0 +1,141 @@
+---
+title: "Disease Causes"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
+
+```{r setup, message = FALSE, warning = FALSE, include=FALSE}
+library(tidyverse)
+library(readxl)
+library(plotly)
+library(malariaAtlas)
+library(leaflet)
+library(ggridges)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+Introduction to Page
+
+# Vectors: Mosquitoes
+
+Over 3,500 species of mosquitoes grouped into 41 genera have been identified. Of these, Malaria is only transmitted by the female species of the genus Anopheles. To date, there are 430 species of this genus approximately, and of these only 30 to 40 of these species are vectors in nature that actually transmit Malaria.
+
+Although these Malaria causing vectors are located in most regions of the world, there are often different species that are indigenous and more common than others in different regions of the world. (This poses a risk of re-occurrence in regions where Malaria has been eliminated)
+
+
+Anopheles mosquitoes life cycle is egg, larva, pupa, and adult. The female mosquitoes (which transmit Malaria) use blood meals for their egg production. They obtain their blood meals from Humans, cattles etc. Unlike in humans, the parasite does not affect or cause mosquitoes to be ill therefore they are able to host the life cyle of the parasite. Ambient temperature, humidity and the life span of the mosquito.
+
+## Mosquito species across Africa
+```{r, include=FALSE}
+Africa_vec_data = 
+  getVecOcc(continent = "Africa") %>% 
+  as_tibble()
+```
+
+```{r, warning = FALSE, message=FALSE}
+pal = colorFactor("viridis", Africa_vec_data %>% pull(species_plain))
+Africa_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5
+  )
+```
+
+## Mosquito species across Asia
+Note: Only plot species with observations > 15
+```{r, include=FALSE}
+Asia_vec_data = 
+  getVecOcc(continent = "Asia") %>% 
+  as_tibble()
+```
+
+```{r, warning = FALSE, message=FALSE}
+pal2 = colorFactor("viridis", Asia_vec_data %>% pull(species_plain))
+Asia_vec_data %>% 
+  group_by(country, species_plain) %>% 
+  summarise(n = n(), max_lat = max(latitude), max_long = max(longitude)) %>% 
+  filter(n > 15) %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(~max_long, ~max_lat, radius = ~sqrt(n), color = ~pal2(species_plain)) %>% 
+  addLegend("bottomleft", pal = pal2, values = ~species_plain,
+    title = "Mosquito Species",
+    opacity = 0.5,
+    position = "bottomleft"
+  ) 
+```
+
+
+# Causes: Parasite
+
+
+```{r, warning = FALSE, include=FALSE}
+confirm_df = 
+  read_xls(
+    "./data/reported_cases_by_species.xls", range = "A4:K502") %>% 
+  filter(str_detect(
+    Year, "P. falciparum|P. vivax"
+  )) %>% 
+  pivot_longer(
+    cols = "2010":"2018",
+    names_to = "years",
+    values_to = "cases"
+  ) %>% 
+  janitor::clean_names() %>% 
+  rename(species = year,
+         country = who_region_country_area)
+```
+
+Countries of interest:
+Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi
+
+Click the countries that you want to show!
+```{r, warning = FALSE, include=FALSE}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
+
+by_country = 
+  confirm_df %>% 
+  filter(country %in% countries) %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. falciparum" ~ "P. falciparum")) %>% 
+  drop_na(species)
+```
+
+
+```{r, warning = FALSE}
+by_country %>% 
+  mutate(
+    text_label = str_c("Year: ", years, "\nCases: ", cases)
+  ) %>% 
+  plot_ly(
+    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    color = ~country, text = ~text_label, alpha = 0.5
+  ) %>% 
+ style(visible = "legendonly")
+```
+
+
+

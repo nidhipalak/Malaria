@@ -1,0 +1,17 @@
+name: "Malaria"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "Statistics"
+      href: prev_mortality.html
+    - text: "Causes"
+      href: pr_mosq.html
+    - text: "Correlations"
+      href: weather.html
+    - text: "Interventions"
+      href: interventions.html
+
+output:
+  html_document:
+    theme: flatly

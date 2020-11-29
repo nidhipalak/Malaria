@@ -1,0 +1,89 @@
+---
+title: "Malaria PR Dataset Visual summary"
+author: "Wuraola Olawole"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(plotly)
+library(malariaAtlas)
+```
+Here, I got the pR data for Africa and Asia. The predominant parasite species in these parts of the world are p.falciparum and p.vivax (which are quite deadly). Other continents were not yielding data for these 2 parasite species.
+
+```{r message=FALSE, echo=FALSE}
+AF_df = getPR(continent = "Africa", species = "both")
+AS_df = getPR(continent = "Asia", species = "both")
+SA_df = getPR(continent = "Americas", species = "both")
+```
+
+```{r message FALSE}
+africa =
+        AF_df %>%
+        filter(
+              !species == "confidential",
+              year_start %in% 2000:2020,
+              year_end %in% 2000:2020
+              ) %>%
+  group_by(year_start, year_end, month_start, month_end) %>%
+    arrange(across(starts_with("year"), desc)) %>%
+  
+      select(-(pcr_type:citation3))
+        
+```
+
+```{r message=FALSE}
+asia =
+        AS_df %>%
+        filter(
+              !species == "confidential",
+              year_start %in% 2000:2020,
+              year_end %in% 2000:2020
+              ) %>%
+  group_by(year_start, year_end, month_start, month_end) %>%
+    arrange(across(starts_with("year"), desc)) %>%
+  
+      select(-(pcr_type:citation3))
+```
+Did a little bit of tidying such that data for the most recent years came up first and excluded other variables that are not necessarily relevant for quantitative analysis.
+
+## Plots
+
+### Average number of positive cases per country per year (2000 - 2017)
+
+```{r message = FALSE, warning=FALSE}
+africa %>%
+  group_by(year_end, country) %>%
+   summarize(Examined = round(mean(examined, na.rm = TRUE)), Positive = round(mean(positive, na.rm = TRUE))) %>%
+  mutate(text_label = str_c("Avg Examined cases: ", 
+                            Examined, "\nAvg positive cases: ", Positive, "\nYear:", year_end)) %>% 
+  plot_ly(
+    x = ~year_end, y = ~Positive, type = "scatter", mode = "markers",
+    color = ~country, text = ~text_label)
+```
+Although this data is not comprehensive, from this plot, it appears that not a lot of cases are being tested on average. 
+
+### Average PR per country (over 17 year period)
+```{r message = FALSE, warning=FALSE}
+africa %>%
+  group_by(country) %>%
+   summarize(meanpr = (mean(pr, na.rm = TRUE))) %>%
+ mutate(country = fct_reorder(country, meanpr)) %>% 
+  plot_ly(x = ~country, y = ~meanpr, color = ~country, type = "bar", colors = "viridis")
+```
+
+## Average PR per year per country
+```{r message = FALSE, warning=FALSE}
+  africa %>%
+  group_by(year_end, country) %>%
+   summarize(meanpr = (mean(pr, na.rm = TRUE))) %>%
+  plot_ly(
+    x = ~year_end, y = ~meanpr, type = "scatter", mode = "markers",
+    color = ~country)
+```
+
+
+
+
+
+

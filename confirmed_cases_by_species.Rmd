@@ -1,0 +1,71 @@
+---
+title: "Confirmed Cases by PR Species"
+author: "Hanfei Qi"
+output: github_document
+---
+
+```{r setup, message = FALSE, warning = FALSE, include=FALSE}
+library(tidyverse)
+library(readxl)
+library(plotly)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+```{r, warning = FALSE, include=FALSE}
+confirm_df = 
+  read_xls(
+    "./data/reported_cases_by_species.xls", range = "A4:K502") %>% 
+  filter(str_detect(
+    Year, "P. falciparum|P. vivax"
+  )) %>% 
+  pivot_longer(
+    cols = "2010":"2018",
+    names_to = "years",
+    values_to = "cases"
+  ) %>% 
+  janitor::clean_names() %>% 
+  rename(species = year,
+         country = who_region_country_area)
+```
+
+Countries of interest:
+Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi
+```{r, warning = FALSE, include=FALSE}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
+
+by_country = 
+  confirm_df %>% 
+  filter(country %in% countries) %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. falciparum" ~ "P. falciparum")) %>% 
+  drop_na(species)
+```
+
+
+```{r, warning = FALSE, include=FALSE}
+by_country %>% 
+  mutate(
+    text_label = str_c("Year: ", years, "\nCases: ", cases)
+  ) %>% 
+  plot_ly(
+    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    color = ~country, text = ~text_label, alpha = 0.5
+  )
+```
+
