@@ -32,9 +32,7 @@ scale_fill_discrete=scale_fill_viridis_d
 ```
 
 ```{r, include=FALSE}
-
 countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Algeria", "Argentina", "Iran", "Malaysia","Timor-Leste", "China", "El Salvador", "Cabo Verde")
-
 ```
 
 ### Drug treatment policies in 2018
@@ -175,7 +173,7 @@ Function to make ITN graphs versus prevalence
 ```{r}
 itn_graphs = function(df, xaxis, yaxis) {
 
-    ggplot(df,aes(x = xaxis, y = yaxis)) +
+    ggplot(df, aes(x = xaxis,y=yaxis)) +
     geom_point() + 
     labs(x = "Prevalence", y= "% ITN Usage"
     ) + theme(legend.position = "none")
@@ -185,7 +183,7 @@ itn_graphs = function(df, xaxis, yaxis) {
 Graph Function doesnt work!
 ```{r}
 children_itn = 
-  itn_graphs(df = itn_df, xaxis = prevalence, yaxis = percent_of_children_5_years_who_slept_under_an_itn)
+  itn_graphs(itn_df, xaxis = prevalence, yaxis = percent_of_children_5_years_who_slept_under_an_itn)
 ```
 
 ## Children under an ITN
@@ -408,12 +406,13 @@ irs_df %>%
 
 ## Check impact of drug treatments on children
 
-```{r}
+```{r, echo = FALSE, message = FALSE}
 drug_df = 
 household_stat_df %>% 
   filter(preventative_measure %in% c("percent_of_children_5_yearswith_a_positive_rdt",
                                      "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs",
-                                     "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial")
+                               "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial",
+                                     "percent_of_pregnant_women_who_took_3_doses_of_ip_tp")
   ) %>% 
   pivot_wider(
     names_from = preventative_measure,
@@ -470,8 +469,7 @@ drug_df %>%
 ```
 
 
-drug_C
-```{r}
+```{r, echo = FALSE, message = FALSE}
 c_drug_prev = 
 drug_df %>% 
   ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
@@ -479,9 +477,7 @@ drug_df %>%
   labs(title = "% Children: Took ACT",x = "Prevalence (%)", y= "% Childre"
   ) + theme(legend.position = "none") +
   stat_smooth(method = "lm")
-```
 
-```{r}
 c_drug_mort = 
 drug_df %>% 
   ggplot(aes(x = mortality*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
@@ -489,7 +485,24 @@ drug_df %>%
   labs(title = "% Children: Took ACT",x = "Mortality (%)", y= "% Children"
   ) + theme(legend.position = "none") +
   stat_smooth(method = "lm")
+
+c_drug_prev + c_drug_mort
+
+d_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_pregnant_women_who_took_3_doses_of_ip_tp)) +
+  geom_point() + 
+  labs(title = "% Pregnant Women: Took IP TP",x = "Prevalence (%)", y= "% Pregnant Women"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+d_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_pregnant_women_who_took_3_doses_of_ip_tp)) +
+  geom_point() + 
+  labs(title = "% Pregnant Women: Took IP TP",x = "Mortality (%)", y= "% Pregnant Women"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+d_drug_prev + d_drug_mort
 ```
-
-
-
