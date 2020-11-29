@@ -12,6 +12,199 @@ While many countries in North America and parts of Europe have been able to elim
 
 These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d'Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi. Most of these countries are located in sub-Saharan Africa and according to the World Health Organization, they bear the global burden of the disease.
 
+```{r message = FALSE, warning = FALSE, include=FALSE}
+library(tidyverse)
+library(rvest)
+library(httr)
+library(plotly)
+library(ggplot2)
+library(viridis)
+
+
+burden = read_csv("./data/malariawho.csv") %>% 
+  filter(country %in% c("Nigeria", "Democratic Republic of the Congo", "Uganda", "Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
+```
+
+
 ### Prevalence
 
+Plots of prevalence reported and estimated by WHO by country over years. Interestingly, prevalence seems to increase in most countries over the years.
+
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+prevalence = burden %>%
+  select(country, year, reported_cases, estimated_cases, low_est_cases, high_est_cases) %>%
+  plot_ly(x = ~year, color = ~country) %>% 
+  add_trace(y = ~reported_cases, type = "scatter", mode = "lines") %>% 
+  add_trace(y = ~estimated_cases, type = "scatter", colors = "viridis") %>% 
+  layout(
+    title = "Reported and estimated number of cases",
+    yaxis = list(title = "Cases"),
+    updatemenus = list(
+      list(
+        type = "dropdown",
+        y = 0.8,
+        active = 0,
+        buttons = list(
+          list(method = "restyle",
+               args = list("visible", c(T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Angola"),
+          list(method = "restyle",
+               args = list("visible", c(F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Benin"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Burkina Faso"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Burundi"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Cameroon"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Côte d'Ivoire"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Democratic Republic of Congo"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Ghana"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Guinea"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F)), 
+               label = "India"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F)), 
+               label = "Kenya"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F)), 
+               label = "Malawi"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F)), 
+               label = "Mali"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F)), 
+               label = "Mozambique"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F)), 
+               label = "Niger"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F)), 
+               label = "Nigeria"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F)), 
+               label = "Rwanda"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F)), 
+               label = "Uganda"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T)), 
+               label = "United Republic of Tanzania")
+          ))
+    ))
+
+
+prevalence
+```
+
+
 ### Mortality
+
+Mortality is documented by reported deaths and estimated deaths. As expected, reported deaths are far lower than estimated deaths.  However, from estimated deaths, we see some countries trending towards lower numbers!
+
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+mortality = burden %>%
+  select(country, year, reported_deaths, estimated_deaths, low_est_death, high_est_death) %>%
+  plot_ly(x = ~year, color = ~country) %>% 
+  add_trace(y = ~reported_deaths, type = "scatter", mode = "lines") %>% 
+  add_trace(y = ~estimated_deaths, type = "scatter", color = ~country, colors = "viridis") %>% 
+  layout(
+    title = "Reported and estimated deaths",
+    yaxis = list(title = "Deaths"),
+    updatemenus = list(
+      list(
+        type = "dropdown",
+        y = 0.8,
+        active = 0,
+        buttons = list(
+          list(method = "restyle",
+               args = list("visible", c(T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Angola"),
+          list(method = "restyle",
+               args = list("visible", c(F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Benin"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Burkina Faso"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Burundi"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Cameroon"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Côte d'Ivoire"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Democratic Republic of Congo"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Ghana"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Guinea"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F)), 
+               label = "India"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F)), 
+               label = "Kenya"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F)), 
+               label = "Malawi"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F)), 
+               label = "Mali"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F)), 
+               label = "Mozambique"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F)), 
+               label = "Niger"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F)), 
+               label = "Nigeria"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F)), 
+               label = "Rwanda"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F)), 
+               label = "Uganda"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T)), 
+               label = "United Republic of Tanzania")
+          ))
+    ))
+
+mortality
+```
+
+## Incidence
+
+Plot of incidence rates over years.  There seems to be a peak around 2010 in incidence rates.
+
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+incidence = burden %>%
+  select(country, year, incidence_per1000) %>%
+  plot_ly(x = ~year, color = ~country) %>% 
+  add_trace(y = ~incidence_per1000, type = "scatter", mode = "lines") %>% 
+  layout(
+    title = "Incidence Rates",
+    yaxis = list(title = "Incidence per 1000 people"))
+
+incidence
+```
+
