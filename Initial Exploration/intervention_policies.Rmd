@@ -630,5 +630,16 @@ complete_df %>%
     country %in% countries
   ) %>% 
   drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population) %>% 
-ggplot(aes(x = under_5_mortality_rate, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() +geom_line() + stat_smooth(method = "lm") + facet_wrap(country ~.)
+ggplot(aes(x = under_5_mortality_rate, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() + stat_smooth(method = "lm") + facet_wrap(country ~.) + labs(title = "ITN Usage Among Children Under 5 and Malaria Mortality Rates", x = "Mortality Rates", y = "% ITN Usage", color = "Country")
 ```
+
+```{r}
+complete_df %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(indicator_households_with_at_least_one_itn_for_sleeping_percent) %>% 
+ggplot(aes(x = all_ages_mortality_rate, y = indicator_households_with_at_least_one_itn_for_sleeping_percent, color = country)) + geom_point() + stat_smooth(method = "lm") + facet_wrap(country ~.) + labs(title = "ITN Usage Among Children Under 5 and Malaria Mortality Rates", x = "Mortality Rates", y = "% ITN Usage", color = "Country")
+```
+
+
