@@ -451,3 +451,49 @@ drug_df %>%
   ) + theme(legend.position = "none") +
   stat_smooth(method = "lm")
 ```
+
+drug_B
+```{r}
+b_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs)) +
+  geom_point() + 
+  labs(title = "% Children: Took antimalarial drugs",x = "Prevalence (%)", y= "% Childre"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+b_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs)) +
+  geom_point() + 
+  labs(title = "% Children: Took antimalarial drugs",x = "Mortality (%)", y= "% Children"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+
+drug_C
+```{r}
+c_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
+  geom_point() + 
+  labs(title = "% Children: Took ACT",x = "Prevalence (%)", y= "% Childre"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+c_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
+  geom_point() + 
+  labs(title = "% Children: Took ACT",x = "Mortality (%)", y= "% Children"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+
+
