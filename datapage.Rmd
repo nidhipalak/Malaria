@@ -1,0 +1,124 @@
+---
+title: "Untitled"
+author: "Wuraola Olawole"
+date: "11/27/2020"
+output: html_document
+---
+
+```{r, message=FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+Mortality df for the 19 countries
+```{r}
+mortality_df = 
+  read_csv(
+    "./data/mortality.csv") %>%
+    relocate(year, .after = region)
+
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
+
+  mortality_df = 
+        mortality_df %>% 
+          filter(country %in% countries, year %in% 2010:2018)
+```
+
+Cases by parasite species
+```{r}
+
+confirm_df = 
+  read_xls(
+    "./data/reported_cases_by_species.xls", range = "A4:K502") %>% 
+  filter(str_detect(
+    Year, "P. falciparum|P. vivax"
+  )) %>% 
+  pivot_longer(
+    cols = "2010":"2018",
+    names_to = "years",
+    values_to = "cases"
+  ) %>% 
+  janitor::clean_names() %>% 
+  rename(species = year,
+         country = who_region_country_area)
+```
+
+```{r, warning=FALSE}
+by_country = 
+  confirm_df %>% 
+  filter(country %in% countries) %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. falciparum" ~ "P. falciparum")) %>% 
+  drop_na(species)
+```
+
+population at risk, estimated cases
+```{r, warning=FALSE}
+
+pop_df = 
+  read_xls(
+    "./data/population_at_risk_estimated_cases_deaths.xls") %>%
+  select(1:6) %>%
+  rename(
+    region = 'Columna1',
+    country = 'Columna2',
+    year = 'Columna3',
+    pop_at_risk = 'Columna4',
+    cases_lower = 'Columna5',
+    cases_point = 'Columna6'
+    ) %>%
+  select(-cases_lower) %>%
+  relocate(country, .before = region) %>%
+  filter(country %in% countries) %>%
+  mutate(
+    year = as.numeric(year),
+    pop_at_risk = as.numeric(pop_at_risk),
+    cases_point = as.numeric(cases_point)
+  )
+
+pop_df =
+      pop_df[-1,]
+
+```
+
+Reported cases by method of confirmation
+```{r, warning=FALSE}
+
+rep_cases_df = 
+  read_xls(
+    "./data/reported_cases_by_method_of_confirmation.xls")
+
+rep_cases_df =
+    rep_cases_df[-c(1:4),]
+
+rep_cases_df =
+    rep_cases_df %>%
+      janitor::row_to_names(row_number = 1) %>%
+  janitor::clean_names()
+  
+  rep_cases =
+      rep_cases_df[-1,]
+  rep_cases = 
+      rep_cases %>%
+        pivot_longer(x2000:x2018, names_to = "year", values_to = "cases" ) %>%
+  rename(
+   country = 'who_region_country_area',
+   method = 'na'
+   ) %>%
+  select(-na_2)
+  
+```
+
+```{r, warning=FALSE}
+rep_cases =
+  rep_cases %>%
+    mutate(
+      country = str_replace(country, "1", ""), 
+      year = str_replace(year, "x", ""),
+      year = as.numeric(year),
+      cases = as.numeric(cases)
+    ) %>%
+  filter(country %in% countries)
+```
+

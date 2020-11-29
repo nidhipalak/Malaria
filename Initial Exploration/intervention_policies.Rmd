@@ -1,0 +1,645 @@
+---
+title: "Intervention Policies"
+author: "Murrel Pereira"
+date: "11/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(malariaAtlas)
+library(leaflet)
+library(ggridges)
+library(readxl)
+library(plotly)
+library(patchwork)
+
+knitr::opts_chunk$set(
+  fig.width=6,
+  fig.asp=.9,
+  out.width ="60%"
+)
+
+theme_set(theme_minimal() +theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.color = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete=scale_fill_viridis_d
+```
+
+```{r, include=FALSE}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Algeria", "Argentina", "Iran", "Malaysia","Timor-Leste", "China", "El Salvador", "Cabo Verde")
+```
+
+### Drug treatment policies in 2018
+```{r, include=FALSE}
+policy_pf_df = 
+  read_excel(
+    "./data/antimalarial_drug_policy.xlsx", range = "A4:E105") %>% 
+  janitor::clean_names() %>% 
+  rename(
+    country = who_region_country_area
+  ) %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  pivot_longer(
+    uncomplicated_unconfirmed:prevention_during_pregnancy,
+    names_to = "case_type",
+    values_to = "treatment_policy"
+  ) %>% 
+  mutate(
+    al = str_detect(treatment_policy, "AL"),
+    as = str_detect(treatment_policy, "AS"),
+    qn = str_detect(treatment_policy, "QN"),
+    sp_ipt = str_detect(treatment_policy, "SP\\(IPT"),
+    aq = str_detect(treatment_policy, "AQ"),
+    am = str_detect(treatment_policy, "AM"),
+    cq = str_detect(treatment_policy, "CQ"),
+    pq = str_detect(treatment_policy, "PQ"),
+  ) %>% 
+  select(-treatment_policy)
+
+policy_pf_df = 
+policy_pf_df %>% 
+  pivot_longer(
+    al:pq,
+    names_to = "treatment",
+    values_to = "treatment_policy"
+  ) %>% 
+  nest(treatment_policies_df = c(case_type, treatment, treatment_policy))
+
+```
+
+### Estimated cases and deaths
+```{r, include=FALSE}
+estimate_cases_deaths_df = 
+  read_excel(
+    "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
+  janitor::clean_names() %>% 
+  filter(country %in% countries) %>% 
+  select(-cases_lower, -cases_upper, -deaths_lower, -deaths_upper) %>% 
+  rename(
+    cases = cases_point,
+    deaths = deaths_point
+  ) %>% 
+  mutate(
+    prevalence = cases / population_at_risk,
+    mortality = deaths / population_at_risk
+  )
+```
+
+### # of nets/act treatments (2016 - 2018)
+```{r, include=FALSE}
+commodities_df =
+  read_excel(
+    "./data/commodities_distribution.xlsx", range = "A4:H297") %>% 
+  janitor::clean_names() %>% 
+  rename(country = who_region_country_area) %>% 
+  fill(country, .direction = "down") %>% 
+  filter(country %in% countries) 
+```
+
+Commodities data is short and is not normalized relative to population. Use the household stats data instead
+
+### Combine commodities and cases/deaths df
+This dataset wasnt useful
+```{r}
+est_cases_commodities_df =
+  left_join(estimate_cases_deaths_df, commodities_df, by = c("country","year")) 
+```
+
+What is the population malaria prevelance and mortality?
+```{r}
+ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = prevalence, color = country)) + geom_line())
+
+ggplotly(ggplot(estimate_cases_deaths_df, aes(x = year, y = mortality, color = country)) + geom_line() )
+```
+
+### Clean up data from STAT compiler household statistics (2015 - 2018)
+```{r}
+household_stat_df =
+  read_excel(
+    "./data/household_survey_STAT.xls", range = "A4:T44", col_names = c("country", "source", "% of households with at least one ITN", "% of households with at least one ITN for every two persons who stayed in the household the previous night", "% of households with IRS in last 12 months", "% of households with at least one ITN and/or IRS in the past 12 months", "% of householdswith at least one ITN for every two persons and/or IRS in the past 12 months", "% of population with access to an ITN", "% of population who slept under an ITN last night", "% of ITNs that were used last night", "% of pregnant women who slept under an ITN", "% of pregnant women who took 3+ doses of IPTp", "% of children <5 years who slept under an ITN", "% of children <5 years with moderate or severe anaemia", "% of children <5 yearswith a positive RDT", "% of children <5 years with a positive microscopy blood smear", "% of children <5 years with fever in last 2 weeksfor whom advice or treatment was sought", "% of children <5 years with fever in last 2 weekswho had blood taken from a finger or heel for testing", "% of children <5 years with fever in last 2 weeks who took antimalarial drugs", "% of children <5 years with fever in last 2 weeks who took an ACT among those who received any antimalarial")) %>% 
+  janitor::clean_names() %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  pivot_longer(
+    percent_of_households_with_at_least_one_itn:percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial,
+    names_to = "preventative_measure",
+    values_to = "percentage"
+  ) %>% 
+  drop_na(percentage) %>% 
+  mutate(
+    percentage = as.numeric(percentage),
+    year = substr(source, 1, 4),
+   year = as.integer(year),
+   year_end = substr(source, 6, 7),
+   year_end = case_when(
+     str_detect(year_end, "[MDA][IH]") == TRUE ~ NA_character_,
+     str_detect(year_end, "[MDA][IH]") == FALSE ~ year_end
+  ),
+  year_end = str_c("20", year_end),
+  year_end = as.integer(year_end)
+  ) %>% 
+  select(-source)
+```
+
+```{r}
+itn_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_households_with_at_least_one_itn", 
+                                     "percent_of_pregnant_women_who_slept_under_an_itn",
+                                    "percent_of_children_5_years_who_slept_under_an_itn",
+                                    "percent_of_population_who_slept_under_an_itn_last_night")) %>% 
+  pivot_wider(
+    names_from = preventative_measure,
+    values_from = percentage
+  ) %>% 
+  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
+  drop_na(percent_of_households_with_at_least_one_itn) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) 
+```
+
+Function to make ITN graphs versus prevalence
+```{r}
+itn_graphs = function(df, xaxis, yaxis) {
+
+    ggplot(df, aes(x = xaxis,y=yaxis)) +
+    geom_point() + 
+    labs(x = "Prevalence", y= "% ITN Usage"
+    ) + theme(legend.position = "none")
+}
+```
+
+Graph Function doesnt work!
+```{r}
+children_itn = 
+  itn_graphs(itn_df, xaxis = prevalence, yaxis = percent_of_children_5_years_who_slept_under_an_itn)
+```
+
+## Children under an ITN
+```{r}
+children_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_who_slept_under_an_itn)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Children <5 Years Age",x = "Prevalence (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Pregnant women under an ITN
+```{r}
+preg_women_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_pregnant_women_who_slept_under_an_itn)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Pregnant Women",x = "Prevalence (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Households under an ITN
+```{r}
+household_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_households_with_at_least_one_itn)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Households",x = "Prevalence (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Population under an ITN
+```{r}
+population_itn = 
+itn_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_population_who_slept_under_an_itn_last_night)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Population",x = "Prevalence (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+(population_itn + household_itn) / (preg_women_itn + children_itn)
+```
+
+## Children under an ITN
+```{r}
+children_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_who_slept_under_an_itn)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Children <5 Years Age",x = "Mortality (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Pregnant women under an ITN
+```{r}
+preg_women_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_pregnant_women_who_slept_under_an_itn)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Pregnant Women",x = "Mortality (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Households under an ITN
+```{r}
+household_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_households_with_at_least_one_itn)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Households",x = "Mortality (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Population under an ITN
+```{r}
+population_itn_mort = 
+itn_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_population_who_slept_under_an_itn_last_night)) +
+  geom_point() + 
+  labs(title = "ITN Usage: Population",x = "Mortality (%)", y= "% ITN Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+(population_itn_mort + household_itn_mort) / (preg_women_itn_mort + children_itn_mort)
+```
+
+
+### Burden data from 2007 - 2012
+```{r}
+burden = read_csv("./data/malariawho.csv")
+```
+
+```{r}
+burden_countries =
+burden %>% 
+  filter(country %in% countries) %>% 
+  drop_na(estimated_nets) %>% 
+  select(-low_est_death, -high_est_death, -low_est_cases, -high_est_cases, -low_est_nets,-high_est_nets) %>% 
+  filter(residence_area == "Total") 
+```
+
+```{r}
+burden_itn =
+  burden_countries %>% 
+  ggplot(aes(x=incidence_per1000, y = estimated_nets)) + geom_point()
+```
+
+### Perform linear regression on ITN models with prevalence
+
+```{r}
+fit_children_prev = lm(prevalence*100 ~ percent_of_children_5_years_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_preg_prev = lm(prevalence*100 ~ percent_of_pregnant_women_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_household_prev = lm(prevalence*100 ~ percent_of_households_with_at_least_one_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_population_prev = lm(prevalence*100 ~ percent_of_population_who_slept_under_an_itn_last_night, data = itn_df) %>% 
+  broom::tidy()
+
+prev_fits = bind_rows(fit_children_prev, fit_preg_prev, fit_household_prev, fit_population_prev) %>% filter(term != "(Intercept)")
+```
+
+### Perform linear regression on ITN models with mortality
+
+```{r}
+fit_children_mort = lm(mortality*100 ~ percent_of_children_5_years_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_preg_mort = lm(mortality*100 ~ percent_of_pregnant_women_who_slept_under_an_itn, data = itn_df) %>% 
+  broom::tidy()
+
+fit_household_mort = lm(mortality*100 ~ percent_of_households_with_at_least_one_itn, data = itn_df) %>%
+  broom::tidy()
+
+fit_population_mort = lm(mortality*100 ~ percent_of_population_who_slept_under_an_itn_last_night, data = itn_df) %>% 
+  broom::tidy()
+
+mort_fits = bind_rows(fit_children_mort, fit_preg_mort, fit_household_mort, fit_population_mort) %>% filter(term != "(Intercept)")
+```
+
+## IRS analysis
+
+```{r}
+irs_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_households_with_irs_in_last_12_months",
+                                "percent_of_households_with_at_least_one_itn_and_or_irs_in_the_past_12_months",
+                                "percent_of_householdswith_at_least_one_itn_for_every_two_persons_and_or_irs_in_the_past_12_months")
+  ) %>% 
+  pivot_wider(
+    names_from = preventative_measure,
+    values_from = percentage
+  ) %>% 
+  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
+  drop_na(percent_of_households_with_at_least_one_itn_and_or_irs_in_the_past_12_months) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) 
+```
+
+IRS_A
+```{r}
+a_irs_prev = 
+irs_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_households_with_irs_in_last_12_months)) +
+  geom_point() + 
+  labs(title = "IRS Usage: Only IRS Last 12 Months",x = "Prevalence (%)", y= "% IRS Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+a_irs_mort = 
+irs_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_households_with_irs_in_last_12_months)) +
+  geom_point() + 
+  labs(title = "IRS Usage: Only IRS Last 12 Months",x = "Mortality (%)", y= "% IRS Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+IRS_B
+```{r}
+b_irs = 
+irs_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_households_with_at_least_one_itn_and_or_irs_in_the_past_12_months)) +
+  geom_point() + 
+  labs(title = "IRS Usage: IRS and/or ITN Last 12 Months",x = "Prevalence (%)", y= "% IRS Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+IRS_C
+
+```{r}
+c_irs = 
+irs_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_householdswith_at_least_one_itn_for_every_two_persons_and_or_irs_in_the_past_12_months)) +
+  geom_point() + 
+  labs(title = "IRS Usage: IRS Last 12 Months and/or ITN per 2 people",x = "Prevalence (%)", y= "% IRS Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+## Check impact of drug treatments on children
+
+```{r, echo = FALSE, message = FALSE}
+drug_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_children_5_yearswith_a_positive_rdt",
+                                     "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs",
+                               "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial",
+                                     "percent_of_pregnant_women_who_took_3_doses_of_ip_tp")
+  ) %>% 
+  pivot_wider(
+    names_from = preventative_measure,
+    values_from = percentage
+  ) %>% 
+  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
+  drop_na(percent_of_children_5_yearswith_a_positive_rdt) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) 
+```
+
+drug_A
+```{r}
+a_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_yearswith_a_positive_rdt)) +
+  geom_point() + 
+  labs(title = "Positive RDT Among Children",x = "Prevalence (%)", y= "% Positive"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+a_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_yearswith_a_positive_rdt)) +
+  geom_point() + 
+  labs(title = "Positive RDT Among Children",x = "Mortality (%)", y= "% Positive"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+drug_B
+```{r}
+b_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs)) +
+  geom_point() + 
+  labs(title = "% Children: Took antimalarial drugs",x = "Prevalence (%)", y= "% Childre"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+```{r}
+b_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs)) +
+  geom_point() + 
+  labs(title = "% Children: Took antimalarial drugs",x = "Mortality (%)", y= "% Children"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+```
+
+
+```{r, echo = FALSE, message = FALSE}
+c_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
+  geom_point() + 
+  labs(title = "% Children: Took ACT",x = "Prevalence (%)", y= "% Childre"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+c_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
+  geom_point() + 
+  labs(title = "% Children: Took ACT",x = "Mortality (%)", y= "% Children"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+c_drug_prev + c_drug_mort
+
+d_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_pregnant_women_who_took_3_doses_of_ip_tp)) +
+  geom_point() + 
+  labs(title = "% Pregnant Women: Took IP TP",x = "Prevalence (%)", y= "% Pregnant Women"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+d_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_pregnant_women_who_took_3_doses_of_ip_tp)) +
+  geom_point() + 
+  labs(title = "% Pregnant Women: Took IP TP",x = "Mortality (%)", y= "% Pregnant Women"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+d_drug_prev + d_drug_mort
+```
+
+```{r}
+indicators = c("ITN use by children - percentage of children (under age 5) who slept under an insecticide-treated mosquito net the night prior to the survey","Infant mortality rate", "Under-five mortality rate","IPTp for pregnant women - percentage of women (aged 15-49 years) who received three or more doses of intermittent preventive treatment during antenatal care visits during their last pregnancy","ITN use by children - percentage of children (under age 5) who slept under an insecticide-treated mosquito net the night prior to the survey","Household with insecticide treated net (ITN) and/or indoor residual spraying (IRS) - percentage of households with at least one ITN for every two persons and/or IRS in the past 12 months","Percentage of households with at least one insecticide-treated mosquito net (ITN)","Pregnant women sleeping under ITN - percentage of pregnant women (aged 15-49 years) who slept under an insecticide-treated net the previous night","Malaria, first line treatment - percentage of febrile children (under age 5) receiving ACT (first line antimalarial drug), among those receiving any antimalarial drugs", "Careseeking for febrile children - percentage of children (under age 5) with fever for whom advice or treatment was sought from a health facility or provider","Malaria diagnostics - percentage of febrile children (under age 5) who had a finger or heel stick for malaria testing")
+```
+
+```{r}
+unicef_df = read_csv("./data/unicef_2.csv") %>% 
+   janitor::clean_names() %>% 
+   rename(
+     country = geographic_area
+   )   %>% 
+   filter(
+     country %in% countries
+     #indicator %in% indicators
+   ) %>% 
+   select(country, indicator, time_period, obs_value) %>% 
+   rename(
+     year = time_period
+   ) %>% 
+   pivot_wider(
+     names_from = indicator, 
+     values_from = obs_value
+   ) %>% 
+   unchop(everything()) %>% 
+   janitor::clean_names() %>% 
+   write_csv("./data/unicef.csv")
+```
+
+```{r}
+unicef_df = read_csv("./data/unicef.csv")
+```
+
+```{r}
+ggplot(unicef_df, aes(x = year, y = under_five_mortality_rate, color = country)) + geom_point() + geom_line()
+
+ggplotly(ggplot(unicef_df, aes(x = year, y = itn_use_by_children_percentage_of_children_under_age_5_who_slept_under_an_insecticide_treated_mosquito_net_the_night_prior_to_the_survey, color = country)) + geom_point() + geom_line())
+
+ggplotly(ggplot(unicef_df, aes(x = year, y = percentage_of_households_with_at_least_one_insecticide_treated_mosquito_net_itn, color = country)) + geom_point() + geom_line())
+
+ggplotly(ggplot(unicef_df, aes(x = year, y = malaria_first_line_treatment_percentage_of_febrile_children_under_age_5_receiving_act_first_line_antimalarial_drug_among_those_receiving_any_antimalarial_drugs, color = country)) + geom_point() + geom_line())
+```
+
+```{r}
+owi_mortality_rates_df = read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+    under_5_mortality_rate = deaths_malaria_sex_both_age_under_5_rate,
+    all_ages_mortality_rate = deaths_malaria_sex_both_age_all_ages_rate,
+    age_5_14_years_mortality_rate = deaths_malaria_sex_both_age_5_14_years_rate,
+    age_15_49_years_mortality_rate = deaths_malaria_sex_both_age_15_49_years_rate,
+    age_50_69_years_mortality_rate = deaths_malaria_sex_both_age_50_69_years_rate,
+    age_70_years_mortality_rate = deaths_malaria_sex_both_age_70_years_rate,
+    age_standardized_mortality_rate = deaths_malaria_sex_both_age_age_standardized_rate,
+    country = entity
+  ) %>% 
+select(-code)
+```
+
+```{r}
+owi_mortality_rates_df_longer = 
+  read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names()  %>% 
+  pivot_longer(
+    deaths_malaria_sex_both_age_under_5_rate:deaths_malaria_sex_both_age_age_standardized_rate,
+    names_to = "age_group",
+    names_prefix = "deaths_malaria_sex_both_age_",
+    values_to = "mortality_rate"
+  )
+```
+
+```{r}
+owi_mortality_rates_df_longer %>% 
+  group_by(year, age_group) %>%
+  summarize(avg_mortality_rate = mean(mortality_rate)) %>% 
+  mutate(
+    age_group = factor(age_group, levels = c("under_5_rate","5_14_years_rate", "15_49_years_rate",
+                                                  "50_69_years_rate","70_years_rate",
+                                                  "age_standardized_rate","all_ages_rate"))
+  ) %>% 
+  ggplot(aes(x=year, y = avg_mortality_rate, color = age_group)) + geom_point() + geom_line()  + theme(legend.position = "right" )+ labs(title = "Malaria Mortality Rates by Age Group", x = "Year", y = "Mortality Rate (%)", color = "Age Group")
+```
+
+```{r}
+children_itn_df = read_csv("./data/children-sleeping-under-treated-bednet.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+```
+
+```{r}
+household_itn_df = read_csv("./data/households-with-at-least-one-itn.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+```
+
+```{r}
+complete_df =
+  owi_mortality_rates_df %>% 
+  left_join(children_itn_df, by = c("country","year")) %>% 
+  left_join(household_itn_df, by = c("country","year"))
+
+
+```
+
+```{r}
+complete_df %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population) %>% 
+ggplot(aes(x = year, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() +geom_line()
+```
+
+```{r}
+complete_df %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population) %>% 
+ggplot(aes(x = under_5_mortality_rate, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() + stat_smooth(method = "lm") + facet_wrap(country ~.) + labs(title = "ITN Usage Among Children Under 5 and Malaria Mortality Rates", x = "Mortality Rates", y = "% ITN Usage", color = "Country")
+```
+
+```{r}
+complete_df %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(indicator_households_with_at_least_one_itn_for_sleeping_percent) %>% 
+ggplot(aes(x = all_ages_mortality_rate, y = indicator_households_with_at_least_one_itn_for_sleeping_percent, color = country)) + geom_point() + stat_smooth(method = "lm") + facet_wrap(country ~.) + labs(title = "ITN Usage Among Children Under 5 and Malaria Mortality Rates", x = "Mortality Rates", y = "% ITN Usage", color = "Country")
+```
+
+

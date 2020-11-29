@@ -12,6 +12,7 @@ seem to have any data.
 
 ``` r
 library(tidyverse)
+<<<<<<< HEAD
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
@@ -44,6 +45,11 @@ library(rvest)
     ##     guess_encoding
 
 ``` r
+=======
+library(httr)
+library(rvest)
+
+>>>>>>> b18cb8a51a3ca23092b77fd050566638d2f1ce57
 knitr::opts_chunk$set(
   fig.width = 6,
   fig.height = 6,

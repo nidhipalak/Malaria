@@ -8,6 +8,10 @@ output:
 
 Introduction to Page
 
+While many countries in North America and parts of Europe have been able to eliminate the incidence of Malaria, many parts of the world are still plagued by this vector borne illness.  
+
+
+
 ### Prevalence
 
 ### Mortality

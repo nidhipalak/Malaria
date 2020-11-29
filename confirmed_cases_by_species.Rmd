@@ -1,7 +1,7 @@
 ---
 title: "Confirmed Cases by PR Species"
 author: "Hanfei Qi"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, message = FALSE, warning = FALSE, include=FALSE}
@@ -64,7 +64,7 @@ by_country %>%
     text_label = str_c("Year: ", years, "\nCases: ", cases)
   ) %>% 
   plot_ly(
-    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    x = ~years, y = ~cases, type = "bar", mode = "lines",
     color = ~country, text = ~text_label, alpha = 0.5
   )
 ```
