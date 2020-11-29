@@ -283,7 +283,7 @@ $(document).ready(function () {
   <a href="pr_mosq.html">Causes</a>
 </li>
 <li>
-  <a href="weather.html">Correlations</a>
+  <a href="weather_patterns.html">Correlations</a>
 </li>
 <li>
   <a href="interventions.html">Interventions</a>
@@ -318,8 +318,18 @@ library(readxl)</code></pre>
 ##   region = col_character(),
 ##   reported_deaths = col_double(),
 ##   estimated_deaths = col_double(),
-##   low_est = col_double(),
-##   high_est = col_double()
+##   low_est_death = col_double(),
+##   high_est_death = col_double(),
+##   reported_cases = col_double(),
+##   estimated_cases = col_double(),
+##   low_est_cases = col_double(),
+##   high_est_cases = col_double(),
+##   incidence_per1000 = col_double(),
+##   estimated_nets = col_double(),
+##   low_est_nets = col_double(),
+##   high_est_nets = col_double(),
+##   datasource = col_character(),
+##   residence_area = col_character()
 ## )</code></pre>
 <pre class="r"><code>countries = c(&quot;Nigeria&quot;, &quot;Democratic Republic of the Congo&quot;, &quot;Uganda&quot;,&quot;Mozambique&quot;, &quot;Côte d&#39;Ivoire&quot;, &quot;Niger&quot;, &quot;Burkina Faso&quot;, &quot;Mali&quot;, &quot;Angola&quot;, &quot;United Republic of Tanzania&quot;, &quot;India&quot;, &quot;Ghana&quot;, &quot;Cameroon&quot;, &quot;Rwanda&quot;, &quot;Benin&quot;, &quot;Malawi&quot;, &quot;Kenya&quot;, &quot;Guinea&quot;, &quot;Burundi&quot;)
 
