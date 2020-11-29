@@ -82,6 +82,34 @@ household_stat_df =
   select(-source)
 ```
 
+```{r, echo = FALSE, message = FALSE}
+owi_mortality_rates_df_longer = 
+  read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names()  %>% 
+  pivot_longer(
+    deaths_malaria_sex_both_age_under_5_rate:deaths_malaria_sex_both_age_age_standardized_rate,
+    names_to = "age_group",
+    names_prefix = "deaths_malaria_sex_both_age_",
+    values_to = "mortality_rate"
+  )
+```
+
+In the fight against malaria, children under 5 are disproportionately affected across the world.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+owi_mortality_rates_df_longer =
+owi_mortality_rates_df_longer %>% 
+  group_by(year, age_group) %>%
+  summarize(avg_mortality_rate = mean(mortality_rate)) %>% 
+  mutate(
+    age_group = factor(age_group, levels = c("under_5_rate","5_14_years_rate", "15_49_years_rate",
+                                                  "50_69_years_rate","70_years_rate",
+                                                  "age_standardized_rate","all_ages_rate"))
+  ) 
+
+
+ggplotly(ggplot(owi_mortality_rates_df_longer,aes(x=year, y = avg_mortality_rate, color = age_group)) + geom_point() + geom_line()  + theme(legend.position = "right" )+ labs(title = "Malaria Mortality Rates by Age Group", x = "Year", y = "Mortality Rate (%)", color = "Age Group"))
+```
 
 ## Prevention
 
@@ -93,149 +121,61 @@ WHO recommends protection for all people at risk of malaria with effective malar
 
 Sleeping under an insecticide-treated net (ITN) can reduce contact between mosquitoes and humans by providing both a physical barrier and an insecticidal effect. Population-wide protection can result from the killing of mosquitoes on a large scale where there is high access and usage of such nets within a community.
 
-
-```{r, echo=FALSE}
-itn_df = 
-household_stat_df %>% 
-  filter(preventative_measure %in% c("percent_of_households_with_at_least_one_itn", 
-                                     "percent_of_pregnant_women_who_slept_under_an_itn",
-                                    "percent_of_children_5_years_who_slept_under_an_itn",
-                                    "percent_of_population_who_slept_under_an_itn_last_night")) %>% 
-  pivot_wider(
-    names_from = preventative_measure,
-    values_from = percentage
+```{r, echo = FALSE, message = FALSE}
+owi_mortality_rates_df = read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+    under_5_mortality_rate = deaths_malaria_sex_both_age_under_5_rate,
+    all_ages_mortality_rate = deaths_malaria_sex_both_age_all_ages_rate,
+    age_5_14_years_mortality_rate = deaths_malaria_sex_both_age_5_14_years_rate,
+    age_15_49_years_mortality_rate = deaths_malaria_sex_both_age_15_49_years_rate,
+    age_50_69_years_mortality_rate = deaths_malaria_sex_both_age_50_69_years_rate,
+    age_70_years_mortality_rate = deaths_malaria_sex_both_age_70_years_rate,
+    age_standardized_mortality_rate = deaths_malaria_sex_both_age_age_standardized_rate,
+    country = entity
   ) %>% 
-  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
-  drop_na(percent_of_households_with_at_least_one_itn) %>% 
-  mutate(
-    country = as.factor(country),
-    country = fct_reorder(country, prevalence)
-  ) 
+select(-code)
+
+children_itn_df = read_csv("./data/children-sleeping-under-treated-bednet.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+
+household_itn_df = read_csv("./data/households-with-at-least-one-itn.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+
+complete_df =
+  owi_mortality_rates_df %>% 
+  left_join(children_itn_df, by = c("country","year")) %>% 
+  left_join(household_itn_df, by = c("country","year")) %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population)
 ```
 
-```{r, echo=FALSE}
-#Children under an ITN
-children_itn = 
-itn_df %>% 
-  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_who_slept_under_an_itn)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Children <5 Years Age",x = "Prevalence (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-
-#Pregnant women under an ITN
-preg_women_itn = 
-itn_df %>% 
-  ggplot(aes(x = prevalence*100, y = percent_of_pregnant_women_who_slept_under_an_itn)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Pregnant Women",x = "Prevalence (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-
-# Households under an ITN
-
-household_itn = 
-itn_df %>% 
-  ggplot(aes(x = prevalence*100, y = percent_of_households_with_at_least_one_itn)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Households",x = "Prevalence (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-
-# Population under an ITN
-
-population_itn = 
-itn_df %>% 
-  ggplot(aes(x = prevalence*100, y = percent_of_population_who_slept_under_an_itn_last_night)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Population",x = "Prevalence (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+complete_df %>% 
+ggplot(aes(x = under_5_mortality_rate, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() + stat_smooth(method = "lm") + facet_wrap(country ~.) + labs(title = "ITN Usage Among Children Under 5 and Malaria Mortality Rates", x = "Mortality Rates per 1000", y = "% ITN Usage", color = "Country")
 ```
 
 ```{r, echo = FALSE, message = FALSE}
-(population_itn + household_itn) / (preg_women_itn + children_itn)
+fit_itn_owi = lm(under_5_mortality_rate ~ use_of_insecticide_treated_bed_nets_percent_of_under_5_population + country, data = complete_df) %>% 
+  broom::tidy()
+
+fit_itn_owi %>% 
+  filter(term != "(Intercept)") %>% 
+  knitr:::kable()
+  
 ```
 
-```{r, echo = FALSE, message = FALSE}
-fit_children_prev = lm(prevalence*100 ~ percent_of_children_5_years_who_slept_under_an_itn, data = itn_df) %>% 
-  broom::tidy()
-
-fit_preg_prev = lm(prevalence*100 ~ percent_of_pregnant_women_who_slept_under_an_itn, data = itn_df) %>% 
-  broom::tidy()
-
-fit_household_prev = lm(prevalence*100 ~ percent_of_households_with_at_least_one_itn, data = itn_df) %>% 
-  broom::tidy()
-
-fit_population_prev = lm(prevalence*100 ~ percent_of_population_who_slept_under_an_itn_last_night, data = itn_df) %>% 
-  broom::tidy()
-
-prev_fits = bind_rows(fit_children_prev, fit_preg_prev, fit_household_prev, fit_population_prev) %>% filter(term != "(Intercept)")
-
-prev_fits %>% 
-  knitr::kable()
-```
-
-```{r, echo=FALSE}
-# Children under an ITN
-children_itn_mort = 
-itn_df %>% 
-  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_who_slept_under_an_itn)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Children <5 Years Age",x = "Mortality (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-
-# Pregnant women under an ITN
-preg_women_itn_mort = 
-itn_df %>% 
-  ggplot(aes(x = mortality*100, y = percent_of_pregnant_women_who_slept_under_an_itn)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Pregnant Women",x = "Mortality (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-
-# Households under an ITN
-household_itn_mort = 
-itn_df %>% 
-  ggplot(aes(x = mortality*100, y = percent_of_households_with_at_least_one_itn)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Households",x = "Mortality (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-
-# Population under an ITN
-population_itn_mort = 
-itn_df %>% 
-  ggplot(aes(x = mortality*100, y = percent_of_population_who_slept_under_an_itn_last_night)) +
-  geom_point() + 
-  labs(title = "ITN Usage: Population",x = "Mortality (%)", y= "% ITN Usage"
-  ) + theme(legend.position = "none") +
-  stat_smooth(method = "lm")
-```
-
-```{r, echo = FALSE, message = FALSE}
-(population_itn_mort + household_itn_mort) / (preg_women_itn_mort + children_itn_mort)
-```
-
-```{r, echo = FALSE, message = FALSE}
-fit_children_mort = lm(mortality*100 ~ percent_of_children_5_years_who_slept_under_an_itn, data = itn_df) %>% 
-  broom::tidy()
-
-fit_preg_mort = lm(mortality*100 ~ percent_of_pregnant_women_who_slept_under_an_itn, data = itn_df) %>% 
-  broom::tidy()
-
-fit_household_mort = lm(mortality*100 ~ percent_of_households_with_at_least_one_itn, data = itn_df) %>%
-  broom::tidy()
-
-fit_population_mort = lm(mortality*100 ~ percent_of_population_who_slept_under_an_itn_last_night, data = itn_df) %>% 
-  broom::tidy()
-
-mort_fits = bind_rows(fit_children_mort, fit_preg_mort, fit_household_mort, fit_population_mort) %>% filter(term != "(Intercept)")
-
-mort_fits %>% 
-  knitr::kable()
-```
+Based on the above graphs, you can see that ITN usage among children improves mortality rates by 4 children per 1000 children. 
 
 ### IRS
 
@@ -243,6 +183,7 @@ Indoor residual spraying (IRS) with insecticides is another powerful way to rapi
 
 Globally, IRS protection declined from a peak of 5% in 2010 to 2% in 2018, with decreases seen across all WHO regions, apart from the WHO Eastern Mediterranean Region. The declines in IRS coverage are occurring as countries switch from pyrethroid insecticides to more expensive alternatives to mitigate mosquito resistance to pyrethroids. 
 
+The following graph shows a weak relationship between IRS spraying and mortality rates due to lack of data.
 ```{r, echo = FALSE, message = FALSE}
 irs_df = 
 household_stat_df %>% 
@@ -283,9 +224,9 @@ fit_irs_mort %>%
 
 ### Antimalarial drugs
 
-Antimalarial medicines can also be used to prevent malaria. For travellers, malaria can be prevented through chemoprophylaxis, which suppresses the blood stage of malaria infections, thereby preventing malaria disease. For pregnant women living in moderate-to-high transmission areas, WHO recommends intermittent preventive treatment with sulfadoxine-pyrimethamine, at each scheduled antenatal visit after the first trimester. Similarly, for infants living in high-transmission areas of Africa, 3 doses of intermittent preventive treatment with sulfadoxine-pyrimethamine are recommended, delivered alongside routine vaccinations.
+Antimalarial medicines can also be used to prevent malaria. For travellers, malaria can be prevented through chemoprophylaxis, which suppresses the blood stage of malaria infections, thereby preventing malaria disease. 
 
-Since 2012, WHO has recommended seasonal malaria chemoprevention as an additional malaria prevention strategy for areas of the Sahel sub-region of Africa. The strategy involves the administration of monthly courses of amodiaquine plus sulfadoxine-pyrimethamine to all children under 5 years of age during the high transmission season.
+The below analysis shows the impact on mortality rates if children are treated with ACT as an antimalarial if they are infected.
 
 ```{r, echo = FALSE, message = FALSE}
 drug_df = 
@@ -312,7 +253,7 @@ c_drug_prev =
 drug_df %>% 
   ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
   geom_point() + 
-  labs(title = "% Children: Took ACT",x = "Prevalence (%)", y= "% Childre"
+  labs(title = "% Children: Took ACT",x = "Prevalence (%)", y= "% Children"
   ) + theme(legend.position = "none") +
   stat_smooth(method = "lm")
 
@@ -328,6 +269,19 @@ c_drug_prev + c_drug_mort
 
 ```
 
+As with the IRS data, there is not as much data collected around ACT usage among children. There is a weak relationship in improvements in prevelance and mortality with ACT usage.
+
+```{r, echo = FALSE, message = FALSE}
+fit_drug_mort = lm(prevalence*100 ~ percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial, data = drug_df) %>% 
+  broom::tidy() %>% filter(term != "(Intercept)")
+fit_irs_mort %>% 
+  knitr::kable(caption = "Linear relationship: prevalence and ACT usage among children under 5")
+
+fit_drug_mort = lm(mortality*100 ~ percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial, data = drug_df) %>% 
+  broom::tidy() %>% filter(term != "(Intercept)")
+fit_irs_mort %>% 
+  knitr::kable(caption = "Linear relationship: mortality and ACT usage among children under 5")
+```
 
 
 
