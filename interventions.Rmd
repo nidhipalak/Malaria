@@ -6,29 +6,282 @@ output:
     toc_float: true
 ---
 
+```{r setup, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(malariaAtlas)
+library(leaflet)
+library(ggridges)
+library(readxl)
+library(plotly)
+library(patchwork)
+
+knitr::opts_chunk$set(
+  fig.width=6,
+  fig.asp=.9,
+  out.width ="90%"
+)
+
+theme_set(theme_minimal() +theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.color = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete=scale_fill_viridis_d
+```
+
+```{r, echo = FALSE}
+countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Algeria", "Argentina", "Iran", "Malaysia","Timor-Leste", "China", "El Salvador", "Cabo Verde")
+```
+
+```{r, echo = FALSE}
+estimate_cases_deaths_df = 
+  read_excel(
+    "./data/population_at_risk_estimated_cases_deaths.xls", sheet = "apendix_f_data", range = "A2:J1037") %>% 
+  janitor::clean_names() %>% 
+  filter(country %in% countries) %>% 
+  select(-cases_lower, -cases_upper, -deaths_lower, -deaths_upper) %>% 
+  rename(
+    cases = cases_point,
+    deaths = deaths_point
+  ) %>% 
+  mutate(
+    prevalence = cases / population_at_risk,
+    mortality = deaths / population_at_risk
+  )
+```
+
+```{r, echo=FALSE}
+household_stat_df =
+  read_excel(
+    "./data/household_survey_STAT.xls", range = "A4:T44", col_names = c("country", "source", "% of households with at least one ITN", "% of households with at least one ITN for every two persons who stayed in the household the previous night", "% of households with IRS in last 12 months", "% of households with at least one ITN and/or IRS in the past 12 months", "% of householdswith at least one ITN for every two persons and/or IRS in the past 12 months", "% of population with access to an ITN", "% of population who slept under an ITN last night", "% of ITNs that were used last night", "% of pregnant women who slept under an ITN", "% of pregnant women who took 3+ doses of IPTp", "% of children <5 years who slept under an ITN", "% of children <5 years with moderate or severe anaemia", "% of children <5 yearswith a positive RDT", "% of children <5 years with a positive microscopy blood smear", "% of children <5 years with fever in last 2 weeksfor whom advice or treatment was sought", "% of children <5 years with fever in last 2 weekswho had blood taken from a finger or heel for testing", "% of children <5 years with fever in last 2 weeks who took antimalarial drugs", "% of children <5 years with fever in last 2 weeks who took an ACT among those who received any antimalarial")) %>% 
+  janitor::clean_names() %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  pivot_longer(
+    percent_of_households_with_at_least_one_itn:percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial,
+    names_to = "preventative_measure",
+    values_to = "percentage"
+  ) %>% 
+  drop_na(percentage) %>% 
+  mutate(
+    percentage = as.numeric(percentage),
+    year = substr(source, 1, 4),
+   year = as.integer(year),
+   year_end = substr(source, 6, 7),
+   year_end = case_when(
+     str_detect(year_end, "[MDA][IH]") == TRUE ~ NA_character_,
+     str_detect(year_end, "[MDA][IH]") == FALSE ~ year_end
+  ),
+  year_end = str_c("20", year_end),
+  year_end = as.integer(year_end)
+  ) %>% 
+  select(-source)
+```
+
+```{r, echo = FALSE, message = FALSE}
+owi_mortality_rates_df_longer = 
+  read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names()  %>% 
+  pivot_longer(
+    deaths_malaria_sex_both_age_under_5_rate:deaths_malaria_sex_both_age_age_standardized_rate,
+    names_to = "age_group",
+    names_prefix = "deaths_malaria_sex_both_age_",
+    values_to = "mortality_rate"
+  )
+```
+
+In the fight against malaria, children under 5 are disproportionately affected across the world.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+owi_mortality_rates_df_longer =
+owi_mortality_rates_df_longer %>% 
+  group_by(year, age_group) %>%
+  summarize(avg_mortality_rate = mean(mortality_rate)) %>% 
+  mutate(
+    age_group = factor(age_group, levels = c("under_5_rate","5_14_years_rate", "15_49_years_rate",
+                                                  "50_69_years_rate","70_years_rate",
+                                                  "age_standardized_rate","all_ages_rate"))
+  ) 
+
+
+ggplotly(ggplot(owi_mortality_rates_df_longer,aes(x=year, y = avg_mortality_rate, color = age_group)) + geom_point() + geom_line()  + theme(legend.position = "right" )+ labs(title = "Malaria Mortality Rates by Age Group", x = "Year", y = "Mortality Rate (%)", color = "Age Group"))
+```
+
 ## Prevention
 
 Vector control is the main way to prevent and reduce malaria transmission. If coverage of vector control interventions within a specific area is high enough, then a measure of protection will be conferred across the community.
 
 WHO recommends protection for all people at risk of malaria with effective malaria vector control. Two forms of vector control – insecticide-treated mosquito nets and indoor residual spraying – are effective in a wide range of circumstances.
 
-### Insecticide Treated Mosquito Nets
+### ITN
 
 Sleeping under an insecticide-treated net (ITN) can reduce contact between mosquitoes and humans by providing both a physical barrier and an insecticidal effect. Population-wide protection can result from the killing of mosquitoes on a large scale where there is high access and usage of such nets within a community.
 
-### Indoor Spraying with residual insecticides
+```{r, echo = FALSE, message = FALSE}
+owi_mortality_rates_df = read_csv("./data/malaria-death-rates-by-age.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+    under_5_mortality_rate = deaths_malaria_sex_both_age_under_5_rate,
+    all_ages_mortality_rate = deaths_malaria_sex_both_age_all_ages_rate,
+    age_5_14_years_mortality_rate = deaths_malaria_sex_both_age_5_14_years_rate,
+    age_15_49_years_mortality_rate = deaths_malaria_sex_both_age_15_49_years_rate,
+    age_50_69_years_mortality_rate = deaths_malaria_sex_both_age_50_69_years_rate,
+    age_70_years_mortality_rate = deaths_malaria_sex_both_age_70_years_rate,
+    age_standardized_mortality_rate = deaths_malaria_sex_both_age_age_standardized_rate,
+    country = entity
+  ) %>% 
+select(-code)
+
+children_itn_df = read_csv("./data/children-sleeping-under-treated-bednet.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+
+household_itn_df = read_csv("./data/households-with-at-least-one-itn.csv") %>% 
+  janitor::clean_names() %>% 
+  rename(
+     country = entity
+  ) %>% 
+  select(-code)
+
+complete_df =
+  owi_mortality_rates_df %>% 
+  left_join(children_itn_df, by = c("country","year")) %>% 
+  left_join(household_itn_df, by = c("country","year")) %>% 
+  filter(
+    country %in% countries
+  ) %>% 
+  drop_na(use_of_insecticide_treated_bed_nets_percent_of_under_5_population)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+complete_df %>% 
+ggplot(aes(x = under_5_mortality_rate, y = use_of_insecticide_treated_bed_nets_percent_of_under_5_population, color = country)) + geom_point() + stat_smooth(method = "lm") + facet_wrap(country ~.) + labs(title = "ITN Usage Among Children Under 5 and Malaria Mortality Rates", x = "Mortality Rates per 1000", y = "% ITN Usage", color = "Country")
+```
+
+```{r, echo = FALSE, message = FALSE}
+fit_itn_owi = lm(under_5_mortality_rate ~ use_of_insecticide_treated_bed_nets_percent_of_under_5_population + country, data = complete_df) %>% 
+  broom::tidy()
+
+fit_itn_owi %>% 
+  filter(term != "(Intercept)") %>% 
+  knitr:::kable()
+  
+```
+
+Based on the above graphs, you can see that ITN usage among children improves mortality rates by 4 children per 1000 children. 
+
+### IRS
 
 Indoor residual spraying (IRS) with insecticides is another powerful way to rapidly reduce malaria transmission. It involves spraying the inside of housing structures with an insecticide, typically once or twice per year. To confer significant community protection, IRS should be implemented at a high level of coverage.
 
-Globally, IRS protection declined from a peak of 5% in 2010 to  2% in 2018, with decreases seen across all WHO regions, apart from the WHO Eastern Mediterranean Region. The declines in IRS coverage are occurring as countries switch from pyrethroid insecticides to more expensive alternatives to mitigate mosquito resistance to pyrethroids. 
+Globally, IRS protection declined from a peak of 5% in 2010 to 2% in 2018, with decreases seen across all WHO regions, apart from the WHO Eastern Mediterranean Region. The declines in IRS coverage are occurring as countries switch from pyrethroid insecticides to more expensive alternatives to mitigate mosquito resistance to pyrethroids. 
+
+The following graph shows a weak relationship between IRS spraying and mortality rates due to lack of data.
+```{r, echo = FALSE, message = FALSE}
+irs_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_households_with_irs_in_last_12_months",
+                                "percent_of_households_with_at_least_one_itn_and_or_irs_in_the_past_12_months",
+                                "percent_of_householdswith_at_least_one_itn_for_every_two_persons_and_or_irs_in_the_past_12_months")
+  ) %>% 
+  pivot_wider(
+    names_from = preventative_measure,
+    values_from = percentage
+  ) %>% 
+  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
+  drop_na(percent_of_households_with_at_least_one_itn_and_or_irs_in_the_past_12_months) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) 
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+a_irs_mort = 
+irs_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_households_with_irs_in_last_12_months)) +
+  geom_point() + 
+  labs(title = "IRS Usage: Only IRS Last 12 Months",x = "Mortality (%)", y= "% IRS Usage"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+a_irs_mort
+```
+
+```{r, echo = FALSE, message = FALSE}
+fit_irs_mort = lm(mortality*100 ~ percent_of_households_with_irs_in_last_12_months, data = irs_df) %>% 
+  broom::tidy() %>% filter(term != "(Intercept)")
+fit_irs_mort %>% 
+  knitr::kable()
+```
 
 ### Antimalarial drugs
 
-Antimalarial medicines can also be used to prevent malaria. For travellers, malaria can be prevented through chemoprophylaxis, which suppresses the blood stage of malaria infections, thereby preventing malaria disease. For pregnant women living in moderate-to-high transmission areas, WHO recommends intermittent preventive treatment with sulfadoxine-pyrimethamine, at each scheduled antenatal visit after the first trimester. Similarly, for infants living in high-transmission areas of Africa, 3 doses of intermittent preventive treatment with sulfadoxine-pyrimethamine are recommended, delivered alongside routine vaccinations.
+Antimalarial medicines can also be used to prevent malaria. For travellers, malaria can be prevented through chemoprophylaxis, which suppresses the blood stage of malaria infections, thereby preventing malaria disease. 
 
-Since 2012, WHO has recommended seasonal malaria chemoprevention as an additional malaria prevention strategy for areas of the Sahel sub-region of Africa. The strategy involves the administration of monthly courses of amodiaquine plus sulfadoxine-pyrimethamine to all children under 5 years of age during the high transmission season.
+The below analysis shows the impact on mortality rates if children are treated with ACT as an antimalarial if they are infected.
 
+```{r, echo = FALSE, message = FALSE}
+drug_df = 
+household_stat_df %>% 
+  filter(preventative_measure %in% c("percent_of_children_5_yearswith_a_positive_rdt",
+                                     "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_antimalarial_drugs",
+                               "percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial",
+                                     "percent_of_pregnant_women_who_took_3_doses_of_ip_tp")
+  ) %>% 
+  pivot_wider(
+    names_from = preventative_measure,
+    values_from = percentage
+  ) %>% 
+  right_join(estimate_cases_deaths_df, by = c("country", "year")) %>% 
+  drop_na(percent_of_children_5_yearswith_a_positive_rdt) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) 
+```
 
+```{r, echo = FALSE, message = FALSE}
+c_drug_prev = 
+drug_df %>% 
+  ggplot(aes(x = prevalence*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
+  geom_point() + 
+  labs(title = "% Children: Took ACT",x = "Prevalence (%)", y= "% Children"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+c_drug_mort = 
+drug_df %>% 
+  ggplot(aes(x = mortality*100, y = percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial)) +
+  geom_point() + 
+  labs(title = "% Children: Took ACT",x = "Mortality (%)", y= "% Children"
+  ) + theme(legend.position = "none") +
+  stat_smooth(method = "lm")
+
+c_drug_prev + c_drug_mort
+
+```
+
+As with the IRS data, there is not as much data collected around ACT usage among children. There is a weak relationship in improvements in prevelance and mortality with ACT usage.
+
+```{r, echo = FALSE, message = FALSE}
+fit_drug_mort = lm(prevalence*100 ~ percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial, data = drug_df) %>% 
+  broom::tidy() %>% filter(term != "(Intercept)")
+fit_irs_mort %>% 
+  knitr::kable(caption = "Linear relationship: prevalence and ACT usage among children under 5")
+
+fit_drug_mort = lm(mortality*100 ~ percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial, data = drug_df) %>% 
+  broom::tidy() %>% filter(term != "(Intercept)")
+fit_irs_mort %>% 
+  knitr::kable(caption = "Linear relationship: mortality and ACT usage among children under 5")
+```
 
 
 

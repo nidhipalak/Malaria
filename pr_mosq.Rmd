@@ -34,7 +34,7 @@ Introduction to Page
 
 Over 3,500 species of mosquitoes grouped into 41 genera have been identified. Of these, Malaria is only transmitted by the female species of the genus Anopheles. To date, there are 430 species of this genus approximately, and of these only 30 to 40 of these species are vectors in nature that actually transmit Malaria.
 
-Although these Malaria causing vectors are located in most regions of the world, there are often different species that are indigenous and more common than others in different regions of the world. (This poses a risk of re-occurrence in regions where Malaria has been eliminated)
+Although these Malaria causing vectors are located in most regions of the world, there are often different species that are indigenous and more common than others in different regions of the world. (This poses a risk of re-occurrence in regions where Malaria has been eliminated).
 
 
 Anopheles mosquitoes life cycle is egg, larva, pupa, and adult. The female mosquitoes (which transmit Malaria) use blood meals for their egg production. They obtain their blood meals from Humans, cattles etc. Unlike in humans, the parasite does not affect or cause mosquitoes to be ill therefore they are able to host the life cycle of the parasite. Ambient temperature, humidity and the life span of the mosquito also affect the life cycle of the parasite.
@@ -130,10 +130,13 @@ confirm_df =
          country = who_region_country_area)
 ```
 
-A plot of different countries across years.  
-Countries of interest:  
-Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi.  
-Click the countries that you want to show!
+Plots of confirmed cases by parasite species of different countries across years.  
+
+
+The interactive plot below shows the distribution of Malaria cases for some of the countries of interest (some countries have missing data) between year 2010 and year 2018. For most of the countries in the sub_Saharan African region, the majority of the Malaria cases were caused by _P. falciparum_ species. For India however, the Malaria cases caused by both _P. falciparum_ and _P. vivax_ were quite similar.  
+
+
+Click the countries that you want to check!
 ```{r, warning = FALSE, include=FALSE}
 countries = c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")
 by_country = 
@@ -155,6 +158,27 @@ by_country %>%
     x = ~years, y = ~cases, type = "scatter", mode = "lines",
     color = ~country, text = ~text_label, alpha = 0.5
   ) %>% 
- style(visible = "legendonly")
+  layout(title = 'Confirmed cases by P. falciparum') %>% 
+  style(visible = "legendonly")
 ```
 
+```{r, warning = FALSE, include=FALSE}
+by_india = 
+  confirm_df %>% 
+  filter(country %in% "India") %>% 
+  mutate(  
+    species = case_when(
+      species == "Total: P. vivax" ~ "P. vivax")) %>% 
+  drop_na(species)
+```
+
+```{r, warning = FALSE}
+by_india %>% 
+  mutate(
+    text_label = str_c("Year: ", years, "\nCases: ", cases)
+  ) %>% 
+  plot_ly(
+    x = ~years, y = ~cases, type = "scatter", mode = "lines",
+    color = ~country, text = ~text_label, alpha = 0.5) %>% 
+  layout(title = 'Confirmed cases by P. vivax in India')
+```
