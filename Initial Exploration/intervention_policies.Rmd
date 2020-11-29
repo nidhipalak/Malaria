@@ -506,3 +506,27 @@ drug_df %>%
 
 d_drug_prev + d_drug_mort
 ```
+
+```{r}
+unicef_df = read_csv("./data/unicef.csv") %>% 
+   janitor::clean_names() %>% 
+   rename(
+     country = geographic_area
+   )   %>% 
+   filter(
+     country %in% countries,
+     indicator %in% indicators
+   ) %>% 
+   select(country, indicator, time_period, obs_value) %>% 
+   rename(
+     year = time_period
+   ) %>% 
+   pivot_wider(
+     names_from = indicator, 
+     values_from = obs_value
+   ) %>% 
+   unchop(everything()) %>% 
+   janitor::clean_names() %>% 
+   write_csv("./data/unicef.csv")
+```
+
