@@ -165,7 +165,32 @@ household_stat_df %>%
 
 
 ```{r}
+filtered_itn_df =
+itn_df %>% 
+  drop_na(percent_of_households_with_at_least_one_itn) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) 
 
+
+  ggplot(filtered_itn_df,aes(x = country)) +
+  geom_point(aes(y = prevalence*100), color = "black") +
+  # geom_line(aes(y = mortality), color = "red", linetype = "twodash") +
+  geom_point(aes(y = percent_of_households_with_at_least_one_itn), color = "darkred", linetype = "twodash") +
+  geom_point(aes(y = percent_of_pregnant_women_who_slept_under_an_itn), color = "blue", linetype = "dash")
+```
+
+```{r}
+
+filtered_itn_df %>% 
+  drop_na(percent_of_households_with_at_least_one_itn) %>% 
+  mutate(
+    country = as.factor(country),
+    country = fct_reorder(country, prevalence)
+  ) %>% 
+  ggplot(aes(x = percent_of_pregnant_women_who_slept_under_an_itn, color = mortality*100)) +
+  geom_point(aes(y = percent_of_children_5_years_who_slept_under_an_itn)) 
 ```
 
 Does a household having an ITN improve prevalence/mortality of malaria?
