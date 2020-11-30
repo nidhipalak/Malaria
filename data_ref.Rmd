@@ -37,6 +37,7 @@ h1.title {
 ## Causes Data links
 * [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
 * [Reported cases by Species](data/reported_cases_by_species.xls)
+* [CDC Malaria](https://www.cdc.gov/malaria/about/biology/index.html#tabs-1-6)
 
 ## Correlations Data links
 * [Global Land temperature by country](data/GlobalLandTemperaturesByCountry.csv)
