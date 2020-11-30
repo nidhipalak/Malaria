@@ -16,13 +16,6 @@ h1.title {
 
 
 
-```{r, message=FALSE, warning=FALSE}
-
-library(tidyverse)
-library(httr)
-library(rvest)
-```
-
 ## Statistics Data links
 
 * [Mortality Rates Reported](https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*)
