@@ -125,8 +125,8 @@ make_seasons = function(m) {
    mutate(Year = as.numeric(Year)) %>%
    mutate(Month = as.numeric(Month)) %>%
    mutate(Seasons = make_seasons(Month)) %>%
-     group_by(Month, Seasons,Year) %>%
-    summarise(Month = first(Month),    #what happens if remove first(Month)
+     group_by(Seasons,Year) %>%
+    summarise(
                avg_temp = mean(AverageTemperature, na.rm = T), 
                avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) 
  
@@ -141,11 +141,8 @@ make_seasons = function(m) {
     title = "Average Temperature per Seaons for 1990 - 1995",
     x = "Year",
     y = "Average Temperature ")
- 
- #mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
-  #plot_ly(y = ~avg_temp, color = ~Seasons, type = "box", colors = "viridis") 
-```
 
+```
 
 ```{r}
 outbreakseasons_plot
@@ -163,8 +160,8 @@ make_seasons = function(m) {
    mutate(Year = as.numeric(Year)) %>%
    mutate(Month = as.numeric(Month)) %>%
    mutate(Seasons = make_seasons(Month)) %>%
-     group_by(Month, Seasons, Year) %>%
-    summarise(Month = first(Month),    #what happens if remove first(Month)
+     group_by(Seasons, Year) %>%
+    summarise(
                avg_temp = mean(AverageTemperature, na.rm = T), 
                avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) 
 
@@ -187,32 +184,63 @@ make_seasons = function(m) {
 ```
 
 
-# Uncertainty
+## Malaria Estimated Deaths Compared to Temperature per Country 
+```{r malaria_df, include=FALSE}
+## Malaria Data
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*"
+reported = read_html(url)
+
+reported = reported %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value) %>% 
+  rename(reported_deaths = numeric_value)
+
+## Mortality rates - estimated
+
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*"
+estimated = read_html(url)
+
+estimated = estimated %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value, low_range, high_range) %>% 
+  rename(estimated_deaths = numeric_value, 
+         low_est = low_range,
+         high_est = high_range)
+Reported_deaths = 
+  left_join(reported, estimated, by = c("country" = "country", "year" = "year", "region" = "region")) 
+
+Temp_Death_df = left_join(Globalcountry_temp_df, Reported_deaths, by = c("Country" = "country")) %>% filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
+```
+
 ```{r, include=FALSE}
-#grid.arrange(outbreak_df_plot, nonoutbreak_plot, ncol = 2)
+Final_comparison_ggplot = Temp_Death_df %>%
+  ggplot(aes(x = reported_deaths, y = AverageTemperature, color = Country)) + 
+  geom_point(alpha = 0.25) +
+  theme(legend.position = "bottom") +
+  coord_cartesian() +
+  scale_color_viridis(discrete = T) +
+  labs(
+    title = "Average Temperature Compared to Estimated Deaths per Country",
+    x = "Reported Deaths",
+    y = "Average Temperature ")
 
+Final_comparison = ggplotly(Final_comparison_ggplot)
 
-##Calculate the Uncertainty of the data sets
-
-#Outbreak_uncertainty_plot = outbreak_df %>%
-     #group_by(Year) %>%
-     #summarise(Year = first('Year'), 
-     #avg_temp = mean(AverageTemperature, na.rm = T), 
-     #avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) %>%
-     #ggplot(mapping = aes(x = Year, y = avg_temp)) +
-     #geom_line(color = viridis(1, begin = 0.7), mapping = aes(y = avg_conf)) +
-     #theme_bw()
-
-#Nonoutbreak_uncertainty_plot = nonoutbreak_df %>%
-     #group_by(Year) %>%
-     #summarise(Year = first(Year), 
-     #avg_temp = mean(AverageTemperature, na.rm = T), 
-     #avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) %>%
-     #ggplot(mapping = aes(x = Year, y = avg_temp)) +
-     #geom_line(color = viridis(1, begin = 0.7), mapping = aes(y = avg_conf)) +
-     #theme_bw()
 
 ```
+
+```{r}
+Final_comparison
+```
+
 
 
 
