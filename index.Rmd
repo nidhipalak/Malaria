@@ -23,6 +23,8 @@ h1.title {
 </center>
 
 
+
+
 ### Motivation
 
 Although America is not a malaria hotspot, according to CDC, half of the world's population lives in high risk malaria transmission regions. Our motivation also stems from the fact that most of us (group members) come from countries that have high prevalence of Malaria and some have had first hand experiences with Malaria. In exploring different datasets we found some things and discovered that there was more to Malaria than meets the eye. Most importantly, we found that Malaria can be eradicated even in countries that are current hot spots.
