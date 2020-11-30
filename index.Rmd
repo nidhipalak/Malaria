@@ -1,5 +1,5 @@
 ---
-title: "Malaria"
+title: "Understanding Malaria and How to Contribute to Global Eradication"
 output: 
   html_document:
     toc: true

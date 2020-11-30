@@ -11,7 +11,7 @@
 
 
 
-<title>Malaria</title>
+<title>Understanding Malaria and How to Contribute to Global Eradication</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -25,17 +25,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
-
-<style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -362,16 +353,45 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="prev_mortality.html">Statistics</a>
+  <a href="prev_mortality.html">
+    <span class="fa fa-bar-chart fa-sm"></span>
+     
+    Explore Cases
+  </a>
 </li>
 <li>
-  <a href="pr_mosq.html">Causes</a>
+  <a href="pr_mosq.html">
+    <span class="fa fa-bug fa-sm"></span>
+     
+    Understand Causes
+  </a>
 </li>
 <li>
-  <a href="weather_patterns.html">Correlations</a>
+  <a href="weather_patterns.html">
+    <span class="fa fa-thermometer-quarter fa-sm"></span>
+     
+    Correlations
+  </a>
 </li>
 <li>
-  <a href="interventions.html">Interventions</a>
+  <a href="interventions.html">
+    <span class="fa fa-spray-can fa-sm"></span>
+     
+    Interventions
+  </a>
+</li>
+<li>
+  <a href="report.html">
+    <span class="fa fa-file-text-o fa-sm"></span>
+     
+    Project Report
+  </a>
+</li>
+<li>
+  <a href="https://github.com/nidhipalak/Malaria.github.io">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -382,7 +402,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Malaria</h1>
+<h1 class="title toc-ignore">Understanding Malaria and How to Contribute to Global Eradication</h1>
 
 </div>
 
@@ -397,7 +417,7 @@ h1.title {
 </style>
 <center>
 <div class="figure">
-<img src="data/malaria_pic.jpg" style="width:200.0%" alt="" />
+<img src="data/malaria_pic.jpg" alt="Image from: The Conversation" style="width:200.0%" />
 <p class="caption">Image from: <a href="https://theconversation.com/malaria-new-map-shows-which-areas-will-be-at-risk-because-of-global-warming-144783">The Conversation</a></p>
 </div>
 </center>
@@ -428,6 +448,28 @@ h1.title {
 </div>
 
 
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+ 
+<hr />
+<p style="text-align: center;">
+A work by <a href="https://github.com/nidhipalak">Nidhi Patel</a>, <a href="https://github.com/gold95">Wura Olawole</a>, <a href="https://github.com/ws00289583">Hanfei Qi</a>, <a href="https://github.com/lauracg-coder">Laura Gomez Merchan</a>, and <a href="https://github.com/mwp2123">Murrel Pereira</a>
+</p>
+<p style="text-align: center;">
+© Copyright 2020 The Malaria Eradication Project Team, All Rights Reserved | Powered by Github.io
+</p>
+
+<p> </p>
+
+
+
+
+
+</div>
+
 
 </div>
 </div>
@@ -438,7 +480,7 @@ h1.title {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

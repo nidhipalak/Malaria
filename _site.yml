@@ -1,17 +1,28 @@
-name: "Malaria"
+name: "Understanding Malaria and How to Contribute to Global Eradication"
 output_dir: "."
 navbar:
   title: "Home"
   right:
-    - text: "Statistics"
+    - text: "Explore Cases"
+      icon: fa-bar-chart fa-sm
       href: prev_mortality.html
-    - text: "Causes"
+    - text: "Understand Causes"
+      icon: fa-bug fa-sm
       href: pr_mosq.html
     - text: "Correlations"
+      icon: fa-thermometer-quarter fa-sm
       href: weather_patterns.html
     - text: "Interventions"
+      icon: fa-spray-can fa-sm
       href: interventions.html
+    - text: "Project Report"
+      icon: fa-file-text-o fa-sm
+      href: report.html
+    - icon: fa-github fa-lg
+      href: https://github.com/nidhipalak/Malaria.github.io
 
 output:
   html_document:
     theme: flatly
+    includes:
+      after_body: _suffix.html
