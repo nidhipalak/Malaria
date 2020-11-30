@@ -78,39 +78,32 @@ nonoutbreak_df = Globalcountry_temp_df %>%
 ## During high Malaria Incidence (1990 - 1995): 
 
 ```{r, include=FALSE}
-outbreak_df_plot = outbreak_df %>%
-  ggplot(aes(x = Month, y = AverageTemperature, color = Country)) + 
-  geom_point(alpha = 0.25) + geom_line() +
-  coord_cartesian() +
-  theme(legend.position = "bottom") +
-  labs(
-    title = "Average Temperature per country over each month for 1990- 1995",
-    x = "Month",
-    y = "Average Temperature ")
-outbreak_ggplotly = ggplotly(outbreak_df_plot)
+outbreak_df_plot = outbreak_df %>% 
+  mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
+  plot_ly(y = ~AverageTemperature, color = ~Country, type = "box", colors = "viridis") 
+  #labs(
+    #title = "Average Temperature per country over each month for 1990- 1995")
+  
 ```
 
 ```{r}
-outbreak_ggplotly
+outbreak_df_plot
 ```
 
 
 ## During low Malaria Incidence (2000 - 2005):  
 ```{r, include=FALSE}
 nonoutbreak_plot = nonoutbreak_df %>%
-  ggplot(aes(x = Month, y = AverageTemperature, color = Country)) + 
-  geom_point(alpha = 0.25) + geom_line() +
-  coord_cartesian() +
-  theme(legend.position = "bottom") +
-  labs(
-    title = "Average Temperature per country over each month for 2000-2005",
-    x = "Month",
-    y = "Average Temperature ")
-nonoutbreak_ggplotly = ggplotly(nonoutbreak_plot)
+  mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
+  plot_ly(y = ~AverageTemperature, color = ~Country, type = "box", colors = "viridis") 
+
+  #labs(
+    #title = "Average Temperature per country over each month for 2000-2005",
+
 ```
 
 ```{r}
-nonoutbreak_ggplotly
+nonoutbreak_plot
 ```
 
 
@@ -148,6 +141,9 @@ make_seasons = function(m) {
     title = "Average Temperature per Seaons for 1990 - 1995",
     x = "Year",
     y = "Average Temperature ")
+ 
+ #mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
+  #plot_ly(y = ~avg_temp, color = ~Seasons, type = "box", colors = "viridis") 
 ```
 
 
