@@ -18,7 +18,7 @@ h1.title {
 
 <center>
 
-![Image from: [The Conversation](https://theconversation.com/malaria-new-map-shows-which-areas-will-be-at-risk-because-of-global-warming-144783)](malaria_pic.jpg){width=200%}
+![Image from: [The Conversation](https://theconversation.com/malaria-new-map-shows-which-areas-will-be-at-risk-because-of-global-warming-144783)](data/malaria_pic.jpg){width=200%}
 
 </center>
 
@@ -27,24 +27,24 @@ h1.title {
 
 ### Motivation
 
-Although America is not a malaria hotspot, according to CDC, half of the world's population lives in high risk malaria transmission regions. Our motivation also stems from the fact that most of us (group members) come from countries that have high prevalence of Malaria and some have had first hand experiences with Malaria. In exploring different datasets we found some things and discovered that there was more to Malaria than meets the eye. Most importantly, we found that Malaria can be eradicated even in countries that are current hot spots.
+Although America is not a malaria hotspot, according to CDC, half of the world's population lives in high risk malaria transmission regions. Our interest in Malaria stems from our individual experiences with Malaria has most of us have ties to countries that have high prevalence of Malaria. In exploring different data sets we found some interesting patterns. Most importantly, we found that Malaria can be eradicated even in countries that are current hot spots if proper preventive measures are followed.
 
 
 Malaria is a vector borne disease that is preventable and curable. The parasite responsible for causing malaria is Plasmodium _spp_. These parasites are carried by the female anopheles mosquito. Malaria is more common in regions with high humidity and rainfall. The people at most risk for malaria include; infants, children under 5, pregnant women, HIV/AIDS patients, non-immune migrants, and travelers. 
 
 ### What to expect
 
-Based on the World Health Organization (WHO) report, we have gathered data on 19 countries of interest where the incidence rates of Malaria and Malaria mortality is high and we have used some statistical tools to analyze the data. The observation period spans year 2010 to year 2018.
+Based on the World Health Organization (WHO) report, we have gathered data on 19 countries of interest where the incidence rates of Malaria and Malaria mortality is high. These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d'Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi. Most of these countries are located in sub-Saharan Africa and according to the WHO, they bear the global burden of the disease.
 
-These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d'Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi. Most of these countries are located in sub-Saharan Africa and according to the WHO, they bear the global burden of the disease. 
+* __Statistic tab__: Here we explore changes in Prevalence, Mortality and Incidence rates of Malaria in these countries over time. We also explored the difference in reported and estimated cases.
 
-* Statistic tab: Here we explore changes in Prevalence, Mortality and Incidence rates of Malaria in these countries over time. We also explored the difference in reported and estimated cases.
+* __Causes tab__: Here we explore the vectors and parasite of Malaria. We  assessed the spatial distribution of Mosquito species. We also assessed the distribution of cases caused by predominant species in our countries of interest.
 
-* Causes tab: Here we explore the vectors and parasite of Malaria. We  assessed the spatial distribution of Mosquito species. We also assessed the distribution of cases caused by predominant species in our countries of interest.
+* __Correlations tab__: in this tab we show the relationship between average temperature and seasonal outbreaks.
 
-* Correlations tab: in this tab we show the relationship between average temperature and seasonal outbreaks.
+* __Interventions tab__: Here we explore several intervention measures. We assess the effectiveness of various interventions by checking that they indeed have a reducing effect on child mortality.
 
-* Interventions tab: Here we explore several intervention measures. We assess the effectiveness of various interventions by checking that they indeed have a reducing effect on child mortality.
+The data sets used in this project can be found [here](data_ref.html)
 
 ### Looking ahead
 
@@ -53,7 +53,5 @@ These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambiq
 The war against Malaria continues to be waged. The eradication of Malaria requires deliberate activities that distorts or breaks the transmission pathway as well as the employment of measures such as vector control (most importantly), surveillance, diagnosis and prompt treatments. In the past few years, some countries is several regions of the world have been able to reduce their indigenous cases to 0 for 3 consecutive years.
 
 Two major concerns in this fight against malaria is the insecticide resistance of some mosquito species and recurring anti-malarial drug resistance.
-
-
 
 Learn more about malaria by clicking the links in the navigation bar.
