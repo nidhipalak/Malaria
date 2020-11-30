@@ -1,0 +1,32 @@
+---
+title: "Project Report"
+author: "Team Malaria"
+date: "11/30/2020"
+output: html_document
+---
+
+```{r setup, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(malariaAtlas)
+library(leaflet)
+library(ggridges)
+library(readxl)
+library(plotly)
+library(patchwork)
+
+knitr::opts_chunk$set(
+  fig.width=6,
+  fig.asp=.9,
+  out.width ="90%"
+)
+
+theme_set(theme_minimal() +theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.color = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete=scale_fill_viridis_d
+```
