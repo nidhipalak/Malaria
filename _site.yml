@@ -18,8 +18,12 @@ navbar:
     - text: "Project Report"
       icon: fa-file-text-o fa-sm
       href: report.html
+    - test: "Reference Page"
+      icon: fa-cloud-download-alt
+      href: data_ref.html
     - icon: fa-github fa-lg
       href: https://github.com/nidhipalak/Malaria.github.io
+
 
 output:
   html_document:
