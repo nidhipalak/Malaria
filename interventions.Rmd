@@ -94,7 +94,7 @@ owi_mortality_rates_df_longer =
   )
 ```
 
-## Mortality Rates by Age Group
+## Childhood Mortality Rates
 
 In the fight against malaria, children under the age of 5 are disproportionately affected across the world. The chart below visualizes data  from the organization [our world in data](https://ourworldindata.org/grapher/malaria-death-rates-by-age) and shows the breakdown of death rates from malaria (measured as number of deaths per 100,000 individuals) by age category. 
 
@@ -216,7 +216,7 @@ __Key Variables__
 
 __Data Sources__
 
-We accessed the WHO STATdata (https://www.who.int/publications/i/item/9789241565721) collected about IRS spraying. Because this is a practice not used as much anymore, there was not as much data available and our analysis was not broken down by country.
+We accessed the [WHO STAT data](https://www.who.int/publications/i/item/9789241565721) collected about IRS spraying. Because this is a practice not used as much anymore, there was not as much data available and our analysis was not broken down by country.
 
 __Hypothesis Testing__
 
@@ -271,7 +271,35 @@ We cannot reject the null hypothesis that IRS does not impact country level mort
 
 Antimalarial medicines can also be used to prevent malaria. For travellers, malaria can be prevented through chemoprophylaxis, which suppresses the blood stage of malaria infections, thereby preventing malaria disease. 
 
-The below analysis shows the impact on mortality rates if children are treated with ACT as an antimalarial if they are infected.
+The best available treatment for *P. falciparum malaria* is an artemisinin-based combination therapy (ACT). The WHO has collected data around children under 5 being treated with ACT when diagnosed with malaria or exhibiting symptoms. We'll be using that data to understand the impact of ACT on malaria prevalence and mortality. 
+
+__Key Variables__
+
+* __Prevalance (%)__: `prevalence` This variable was calculated from the WHO data which has population at risk per year per country and number of cases of malaria per year per country. 
+
+* __Mortality (%)__: `mortality` This variable was calculated from the WHO data which has population at risk per year per country and number of deaths attributed to malaria per year per country. 
+
+* __% of Children Under 5 Who Took ACTs__: `percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial` This variable was accessed from a collection of WHO datasets that had it compiled based on global surveys.  
+
+__Data Sources__
+
+We accessed the [WHO STAT data](https://www.who.int/publications/i/item/9789241565721) collected about ACT usage. 
+
+__Hypothesis Testing__
+
+*Prevalence*
+
+* __Ho__: ACT will not impact country level malaria prevalence rates
+* __H1__: ACT will reduce country level malaria prevalence rates
+
+*Mortality*
+
+* __Ho__: ACT will not impact country level malaria mortality rates
+* __H1__: ACT will reduce country level malaria mortality rates
+
+__Results__
+
+The below analysis shows the impact on prevalence and mortality rates if children are treated with ACT as an antimalarial if they are infected.
 
 ```{r, echo = FALSE, message = FALSE}
 drug_df = 
@@ -316,6 +344,8 @@ c_drug_prev + c_drug_mort
 
 As with the IRS data, there is not as much data collected around ACT usage among children. There is a weak relationship in improvements in prevelance and mortality with ACT usage.
 
+Analyzing the data using linear regression showed that there was not enough power to reject the null hypothesis for both mortality and prevalence.
+
 ```{r, echo = FALSE, message = FALSE}
 fit_drug_mort = lm(prevalence*100 ~ percent_of_children_5_years_with_fever_in_last_2_weeks_who_took_an_act_among_those_who_received_any_antimalarial, data = drug_df) %>% 
   broom::tidy() %>% filter(term != "(Intercept)")
@@ -327,3 +357,7 @@ fit_drug_mort = lm(mortality*100 ~ percent_of_children_5_years_with_fever_in_las
 fit_irs_mort %>% 
   knitr::kable(caption = "Linear relationship: mortality and ACT usage among children under 5")
 ```
+
+### Conclusions
+
+The above analyses looks across malaria prevention methods using ITNs, IRS, and ACT usage. The dataset was the most comprehensive for how much data was available for bednets and we were able to confirm a relationship with ITN usage and mortality.
