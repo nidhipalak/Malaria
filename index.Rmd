@@ -43,7 +43,8 @@ Based on the World Health Organization (WHO) report, we have gathered data on 19
 
 * __Interventions tab__: Here we explore several intervention measures. We assess the effectiveness of various interventions by checking that they indeed have a reducing effect on child mortality.
 
-The data sets used in this project can be found [here](data_ref.html)
+* __Reference tab__: The data sets used in this project can be found [here](data_ref.html)
+
 
 ### Looking ahead
 
