@@ -94,7 +94,7 @@ owi_mortality_rates_df_longer =
   )
 ```
 
-In the fight against malaria, children under 5 are disproportionately affected across the world.
+In the fight against malaria, children under the age of 5 are disproportionately affected across the world. The chart below visualizes data  from the organization [our world in data](https://ourworldindata.org/grapher/malaria-death-rates-by-age) and shows the breakdown of death rates from malaria (measured as number of deaths per 100,000 individuals) by age category. 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 owi_mortality_rates_df_longer =
@@ -111,15 +111,33 @@ owi_mortality_rates_df_longer %>%
 ggplotly(ggplot(owi_mortality_rates_df_longer,aes(x=year, y = avg_mortality_rate, color = age_group)) + geom_point() + geom_line()  + theme(legend.position = "right" )+ labs(title = "Malaria Mortality Rates by Age Group", x = "Year", y = "Mortality Rate (%)", color = "Age Group"))
 ```
 
+The following analysis will look into malaria prevention measures shown to be effective in managing malaria globally. 
+
 ## Prevention
 
 Vector control is the main way to prevent and reduce malaria transmission. If coverage of vector control interventions within a specific area is high enough, then a measure of protection will be conferred across the community.
 
 WHO recommends protection for all people at risk of malaria with effective malaria vector control. Two forms of vector control – insecticide-treated mosquito nets and indoor residual spraying – are effective in a wide range of circumstances.
 
-### ITN
+### Insecticide-treated nets
 
-Sleeping under an insecticide-treated net (ITN) can reduce contact between mosquitoes and humans by providing both a physical barrier and an insecticidal effect. Population-wide protection can result from the killing of mosquitoes on a large scale where there is high access and usage of such nets within a community.
+Sleeping under an insecticide-treated net (ITN) can reduce contact between mosquitoes and humans by providing both a physical barrier and an insecticidal effect. 
+
+The below analysis quantifies the impact of usage of bednets by children under 5 and how mortality rates for that age group can be improved.
+
+__Key Variables__
+
+* __Childhood mortality under age 5__: number of deaths per 100,000 individuals. The available data ranges from the years 1990 through 2017.
+
+* __% of ITN Usage by children under 5__: % of children under 5 who sleep under a bednet. The available data ranges from the years 1999 - 2017.
+
+__Data Sources__
+
+Both variables came from separate datasets that were gathered via surveys and tracked globally across countries. The analysis used a combined dataset to understand the impact of bednets usage on childhood mortality. The team looked at multiple sources to access data available in a structured format and explored datasets from the [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721), [UNICEF Data Warehouse](https://data.unicef.org/resources/data_explorer/unicef_f/?ag=UNICEF&df=GLOBAL_DATAFLOW&ver=1.0&dq=.MNCH_IPTP+MNCH_ITN+MNCH_ITN2+MNCH_ITNOWN+MNCH_ITNPREG+MNCH_MLRACT+MNCH_MLRCARE+MNCH_MLRDIAG..&startPeriod=2016&endPeriod=2020), and finally landed on using the [Our World in Data](https://ourworldindata.org/grapher/malaria-death-rates-by-age) since the dataset had the most bednets related data.
+
+__Hypothesis Testing__
+
+* __Ho__: 
 
 ```{r, echo = FALSE, message = FALSE}
 owi_mortality_rates_df = read_csv("./data/malaria-death-rates-by-age.csv") %>% 
@@ -177,7 +195,7 @@ fit_itn_owi %>%
 
 Based on the above graphs, you can see that ITN usage among children improves mortality rates by 4 children per 1000 children. 
 
-### IRS
+### Indoor residual spraying
 
 Indoor residual spraying (IRS) with insecticides is another powerful way to rapidly reduce malaria transmission. It involves spraying the inside of housing structures with an insecticide, typically once or twice per year. To confer significant community protection, IRS should be implemented at a high level of coverage.
 
