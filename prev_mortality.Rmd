@@ -26,7 +26,7 @@ burden = read_csv("./data/malariawho.csv") %>%
 ```
 
 
-### Prevalence
+## Prevalence
 
 Plots of prevalence reported and estimated by WHO by country over years. Interestingly, prevalence seems to increase in most countries over the years.
 
@@ -110,7 +110,7 @@ prevalence
 ```
 
 
-### Mortality
+## Mortality
 
 Mortality is documented by reported deaths and estimated deaths. As expected, reported deaths are far lower than estimated deaths.  However, from estimated deaths, we see some countries trending towards lower numbers!
 
