@@ -111,7 +111,7 @@ owi_mortality_rates_df_longer %>%
 ggplotly(ggplot(owi_mortality_rates_df_longer,aes(x=year, y = avg_mortality_rate, color = age_group)) + geom_point() + geom_line()  + theme(legend.position = "right" )+ labs(title = "Malaria Mortality Rates by Age Group", x = "Year", y = "Mortality Rate (%)", color = "Age Group"))
 ```
 
-The following analysis will look into malaria prevention measures shown to be effective in managing malaria globally. 
+The following analysis will look into malaria prevention measures shown to be effective in managing malaria in the countries of interest that bear about 85% global burden of the disease. These countries are: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d'Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi.
 
 ## Prevention
 
@@ -127,17 +127,22 @@ The below analysis quantifies the impact of usage of bednets by children under 5
 
 __Key Variables__
 
-* __Childhood mortality under age 5__: number of deaths per 100,000 individuals. The available data ranges from the years 1990 through 2017.
+* __Childhood mortality under age 5__: (`under_5_mortality_rate`) number of deaths per 100,000 individuals. The available data ranges from the years 1990 through 2017.
 
-* __% of ITN Usage by children under 5__: % of children under 5 who sleep under a bednet. The available data ranges from the years 1999 - 2017.
+* __% of ITN Usage by children under 5__: (`use_of_insecticide_treated_bed_nets_percent_of_under_5_population`) % of children under 5 who sleep under a bednet. The available data ranges from the years 1999 - 2017.
 
 __Data Sources__
 
-Both variables came from separate datasets that were gathered via surveys and tracked globally across countries. The analysis used a combined dataset to understand the impact of bednets usage on childhood mortality. The team looked at multiple sources to access data available in a structured format and explored datasets from the [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721), [UNICEF Data Warehouse](https://data.unicef.org/resources/data_explorer/unicef_f/?ag=UNICEF&df=GLOBAL_DATAFLOW&ver=1.0&dq=.MNCH_IPTP+MNCH_ITN+MNCH_ITN2+MNCH_ITNOWN+MNCH_ITNPREG+MNCH_MLRACT+MNCH_MLRCARE+MNCH_MLRDIAG..&startPeriod=2016&endPeriod=2020), and finally landed on using the [Our World in Data](https://ourworldindata.org/grapher/malaria-death-rates-by-age) since the dataset had the most bednets related data.
+Both variables came from separate datasets that were gathered via surveys and tracked globally across countries. The analysis used a combined dataset to understand the impact of bednets usage on childhood mortality. The team looked at multiple sources to access data available in a structured format and explored datasets from the [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721), [UNICEF Data Warehouse](https://data.unicef.org/resources/data_explorer/unicef_f/?ag=UNICEF&df=GLOBAL_DATAFLOW&ver=1.0&dq=.MNCH_IPTP+MNCH_ITN+MNCH_ITN2+MNCH_ITNOWN+MNCH_ITNPREG+MNCH_MLRACT+MNCH_MLRCARE+MNCH_MLRDIAG..&startPeriod=2016&endPeriod=2020), and finally landed on using the [Our World in Data](https://ourworldindata.org/grapher/malaria-death-rates-by-age) since the dataset had the most bednets related data. Each of the datasets we explored did not have much data about bednets per country.
 
 __Hypothesis Testing__
 
-* __Ho__: 
+* __Ho__: Use of bednets by children under 5 has no impact to under 5 mortality rates
+* __H1__: Use of bednets by children under 5 reduces mortality rates for children under 5
+
+__Results__
+
+Scatterplot of % ITN usage against that year's associated mortality rates, broken up by country. The dataset for bednets only included data for 12 out of 19 countries of interest. 
 
 ```{r, echo = FALSE, message = FALSE}
 owi_mortality_rates_df = read_csv("./data/malaria-death-rates-by-age.csv") %>% 
@@ -193,7 +198,7 @@ fit_itn_owi %>%
   
 ```
 
-Based on the above graphs, you can see that ITN usage among children improves mortality rates by 4 children per 1000 children. 
+Based on the above analysis, you can see that ITN usage among children improves mortality rates by 4 children per 100,000 children when controlled for countries. We explored an interaction effect between country and use of ITNs, but found no statistically signficant effect, but the dataset might also not be well powered to detect that effect. India, Kenya and Rwanda were also countries that were shown to not have a statistically significant effect - most likely because of lack of data in those countries.
 
 ### Indoor residual spraying
 
