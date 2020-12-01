@@ -120,9 +120,11 @@ Mortality is documented by reported deaths and estimated deaths. As expected, re
 mortality = burden %>%
   select(country, year, reported_deaths, estimated_deaths, low_est_death, high_est_death) %>%
   plot_ly(x = ~year, color = ~country) %>% 
-  add_trace(y = ~reported_deaths, type = "scatter", mode = "lines") %>% 
-  add_trace(y = ~estimated_deaths, type = "scatter", color = ~country, colors = "viridis") %>% 
+  add_trace(y = ~reported_deaths, type = "scatter", mode = "lines", color = ~country, colors = "Blues", name = "Reported") %>% 
+  add_trace(y = ~estimated_deaths, type = "scatter", mode = "marker", color = ~country, colors = "Blues", name = "Estimated") %>% 
   layout(
+    hovermode = "x unified", 
+    showlegend = FALSE,
     title = "Reported and estimated deaths",
     yaxis = list(title = "Deaths"),
     updatemenus = list(
