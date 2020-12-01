@@ -94,6 +94,8 @@ owi_mortality_rates_df_longer =
   )
 ```
 
+## Mortality Rates by Age Group
+
 In the fight against malaria, children under the age of 5 are disproportionately affected across the world. The chart below visualizes data  from the organization [our world in data](https://ourworldindata.org/grapher/malaria-death-rates-by-age) and shows the breakdown of death rates from malaria (measured as number of deaths per 100,000 individuals) by age category. 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -205,6 +207,14 @@ Based on the above analysis, you can see that ITN usage among children improves 
 Indoor residual spraying (IRS) with insecticides is another powerful way to rapidly reduce malaria transmission. It involves spraying the inside of housing structures with an insecticide, typically once or twice per year. To confer significant community protection, IRS should be implemented at a high level of coverage.
 
 Globally, IRS protection declined from a peak of 5% in 2010 to 2% in 2018, with decreases seen across all WHO regions, apart from the WHO Eastern Mediterranean Region. The declines in IRS coverage are occurring as countries switch from pyrethroid insecticides to more expensive alternatives to mitigate mosquito resistance to pyrethroids. 
+
+We accessed the WHO data collected about IRS spraying. Because this is a practice not used as much, there was not as much data available and our analysis was not broken down by country.
+
+__Key Variables__
+
+* __Mortality (%)__: `mortality` This variable was calculated from the WHO data which has population at risk per year per country and number of deaths attributed to malaria per year per country. 
+
+* __% of Households with IRS in Last 12 Months__: `percent_of_households_with_irs_in_last_12_months` This variable was accessed from a collection of WHO datasets.  
 
 The following graph shows a weak relationship between IRS spraying and mortality rates due to lack of data.
 ```{r, echo = FALSE, message = FALSE}
