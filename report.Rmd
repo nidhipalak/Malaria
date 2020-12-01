@@ -5,7 +5,7 @@ date: "11/30/2020"
 output: html_document
 ---
 
-```{r setup, echo = FALSE, message = FALSE}
+```{r setup, echo = FALSE, message = FALSE, warning=FALSE}
 library(tidyverse)
 library(malariaAtlas)
 library(leaflet)
@@ -30,3 +30,22 @@ options(
 scale_colour_discrete = scale_color_viridis_d
 scale_fill_discrete=scale_fill_viridis_d
 ```
+
+## Motivation: 
+
+
+## Related work: 
+
+
+## Initial questions: 
+
+
+## Data: Source, scraping method, cleaning, etc.
+
+## Exploratory analysis: 
+
+
+## Additional analysis: 
+
+
+## Discussion: 
