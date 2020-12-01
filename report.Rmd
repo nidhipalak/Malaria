@@ -41,8 +41,12 @@ Malaria is a vector borne disease that is preventable and curable. The parasite 
 ## Related work
 [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
 
+The World Malaria Report provides annual updates on Malaria trends around the world. The report also contains information about yearly investments, research and tracks the progress of all intervention areas. The information provided in the report is often received from national malaria control programmes in endemic countries
+
+
 [Malaria Atlas Project](https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html)
 
+Malaria Atlas project is a platform that disseminates Malaria data via their Repository for Open Access Data (ROAD-MAP) project. On this platform one can find spatial distribution of Malaria prevalence, incidence, intervention and other important Malaria topics.
 
 ## Initial questions
 The following were initial questions we tried to answer at the beginning. 
@@ -57,14 +61,9 @@ The following were initial questions we tried to answer at the beginning.
 *   Do areas with higher sickle cell traits have less malaria incidence?
 *   Compare time periods
 
-Potential ideas:
+Due to scarcity of data, we were unable to explore some of the initial questions we had set out to answer. As we continued to work with the datasets we had we were able to gete a feel for the questions we could answer given the limitations of our data.
 
-*   Climate change and mosquito prevalence
-*   Relation of species genotypes 
-*   Health education
-*   Topography
-*   Drop in malaria incidence with introduction of interventions (nets, etc)
-*   Severity of malaria in relation to species/time  
+Furthermore, in order to get the most out of our data, we filtered by a list of our countries of interest. These countries of interest according to WHO had the highest prevalence and incidence of Malaria. This way, we focused more on data from critical countries.
 
 ### Reasons why we ask those questions
 
@@ -75,7 +74,8 @@ Potential ideas:
 ### Explore Cases
 
 ### Causes
-For vectors (mosquitos) and parasites of Malaria. We used vectors data from Malaria Atlas Project and parasites data from WHO. The Malaria Atlas data was tidied, so we only need filtered out countries of interest. The WHO data needed to be cleaned up. The original data had 11 variables: Country/area, year, 2010 to 2018 (each year was one variable). The final data contained four variables: country, species, years, and cases. Only P. falciparum and P.vivax were remained because they were major causes of malaria.
+
+For vectors (mosquitoes) and parasites of Malaria, We used vector data from Malaria Atlas Project, and parasite data from WHO Malaria Report 2019. The Malaria Atlas data was already tidy, so we only had to filter by our countries of interest. The WHO data on the other hand needed to be cleaned up. The original data had 11 variables: Country/area, year, 2010 to 2018 (each year was one variable). The final tidied data contained four variables: country, species, years, and cases. After tidying the data, Only _P. falciparum_ and _P.vivax_ parasite species remained because they were the predominant causes of Malaria in our countries of interest.
 
 ### Correlations
 
@@ -88,7 +88,8 @@ For vectors (mosquitos) and parasites of Malaria. We used vectors data from Mala
 ### Explore Cases
 
 ### Causes
-Since the mosquito species data had small sample size (< 30 for most species) and not consistent across years, we used map to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by P. falciparum in countries of interest, from 2010 to 2018, since it was the dominant causes of malaria for most countries. Additionally, a plot for confirmed cases by P. vivax in India because only India had consistent data for both P. falciparum and P. vivax, and the numbers were quite similar.
+
+Since the mosquito species data had small sample size (< 30 for most species) and not consistent across years, we used maps to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by _P. falciparum_ in countries of interest, from 2010 to 2018, since it was the dominant cause of malaria for most countries. Additionally, a plot for confirmed cases by _P. vivax_ in India because only India had consistent data for both _P. falciparum_ and _P. vivax_, and the numbers were quite similar.
 
 ### Correlations
 

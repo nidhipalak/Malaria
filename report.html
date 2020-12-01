@@ -25,8 +25,19 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -391,6 +402,7 @@ div.tocify {
   <a href="data_ref.html">
     <span class="fa fa-cloud-download-alt"></span>
      
+    Reference
   </a>
 </li>
 <li>
@@ -421,7 +433,9 @@ div.tocify {
 <div id="related-work" class="section level2">
 <h2>Related work</h2>
 <p><a href="https://www.who.int/publications/i/item/9789241565721">World Malaria Report 2019</a></p>
+<p>The World Malaria Report provides annual updates on Malaria trends around the world. The report also contains information about yearly investments, research and tracks the progress of all intervention areas. The information provided in the report is often received from national malaria control programmes in endemic countries</p>
 <p><a href="https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html">Malaria Atlas Project</a></p>
+<p>Malaria Atlas project is a platform that disseminates Malaria data via their Repository for Open Access Data (ROAD-MAP) project. On this platform one can find spatial distribution of Malaria prevalence, incidence, intervention and other important Malaria topics.</p>
 </div>
 <div id="initial-questions" class="section level2">
 <h2>Initial questions</h2>
@@ -441,15 +455,8 @@ div.tocify {
 <li>Do areas with higher sickle cell traits have less malaria incidence?</li>
 <li>Compare time periods</li>
 </ul>
-<p>Potential ideas:</p>
-<ul>
-<li>Climate change and mosquito prevalence</li>
-<li>Relation of species genotypes</li>
-<li>Health education</li>
-<li>Topography</li>
-<li>Drop in malaria incidence with introduction of interventions (nets, etc)</li>
-<li>Severity of malaria in relation to species/time</li>
-</ul>
+<p>Due to scarcity of data, we were unable to explore some of the initial questions we had set out to answer. As we continued to work with the datasets we had we were able to gete a feel for the questions we could answer given the limitations of our data.</p>
+<p>Furthermore, in order to get the most out of our data, we filtered by a list of our countries of interest. These countries of interest according to WHO had the highest prevalence and incidence of Malaria. This way, we focused more on data from critical countries.</p>
 <div id="reasons-why-we-ask-those-questions" class="section level3">
 <h3>Reasons why we ask those questions</h3>
 </div>
@@ -461,7 +468,7 @@ div.tocify {
 </div>
 <div id="causes" class="section level3">
 <h3>Causes</h3>
-<p>For vectors (mosquitos) and parasites of Malaria. We used vectors data from Malaria Atlas Project and parasites data from WHO. The Malaria Atlas data was tidied, so we only need filtered out countries of interest. The WHO data needed to be cleaned up. The original data had 11 variables: Country/area, year, 2010 to 2018 (each year was one variable). The final data contained four variables: country, species, years, and cases. Only P. falciparum and P.vivax were remained because they were major causes of malaria.</p>
+<p>For vectors (mosquitoes) and parasites of Malaria, We used vector data from Malaria Atlas Project, and parasite data from WHO Malaria Report 2019. The Malaria Atlas data was already tidy, so we only had to filter by our countries of interest. The WHO data on the other hand needed to be cleaned up. The original data had 11 variables: Country/area, year, 2010 to 2018 (each year was one variable). The final tidied data contained four variables: country, species, years, and cases. After tidying the data, Only <em>P. falciparum</em> and <em>P.vivax</em> parasite species remained because they were the predominant causes of Malaria in our countries of interest.</p>
 </div>
 <div id="correlations" class="section level3">
 <h3>Correlations</h3>
@@ -477,7 +484,7 @@ div.tocify {
 </div>
 <div id="causes-1" class="section level3">
 <h3>Causes</h3>
-<p>Since the mosquito species data had small sample size (&lt; 30 for most species) and not consistent across years, we used map to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by P. falciparum in countries of interest, from 2010 to 2018, since it was the dominant causes of malaria for most countries. Additionally, a plot for confirmed cases by P. vivax in India because only India had consistent data for both P. falciparum and P. vivax, and the numbers were quite similar.</p>
+<p>Since the mosquito species data had small sample size (&lt; 30 for most species) and not consistent across years, we used maps to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by <em>P. falciparum</em> in countries of interest, from 2010 to 2018, since it was the dominant cause of malaria for most countries. Additionally, a plot for confirmed cases by <em>P. vivax</em> in India because only India had consistent data for both <em>P. falciparum</em> and <em>P. vivax</em>, and the numbers were quite similar.</p>
 </div>
 <div id="correlations-1" class="section level3">
 <h3>Correlations</h3>
@@ -526,7 +533,7 @@ A work by <a href="https://github.com/nidhipalak">Nidhi Patel</a>, <a href="http
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
