@@ -200,7 +200,7 @@ fit_itn_owi %>%
   
 ```
 
-Based on the above analysis, you can see that ITN usage among children improves mortality rates by 4 children per 100,000 children when controlled for countries. We explored an interaction effect between country and use of ITNs, but found no statistically signficant effect, but the dataset might also not be well powered to detect that effect. India, Kenya and Rwanda were also countries that were shown to not have a statistically significant effect - most likely because of lack of data in those countries.
+Based on the above analysis, we can reject the null hypothesis and conclude that ITN usage among children improves mortality rates by 4 children per 100,000 children when controlled for countries. We explored an interaction effect between country and use of ITNs, but found no statistically signficant effect, but the dataset might also not be well powered to detect that effect. India, Kenya and Rwanda were also countries that were shown to not have a statistically significant effect - most likely because of lack of data in those countries.
 
 ### Indoor residual spraying
 
@@ -208,15 +208,25 @@ Indoor residual spraying (IRS) with insecticides is another powerful way to rapi
 
 Globally, IRS protection declined from a peak of 5% in 2010 to 2% in 2018, with decreases seen across all WHO regions, apart from the WHO Eastern Mediterranean Region. The declines in IRS coverage are occurring as countries switch from pyrethroid insecticides to more expensive alternatives to mitigate mosquito resistance to pyrethroids. 
 
-We accessed the WHO data collected about IRS spraying. Because this is a practice not used as much, there was not as much data available and our analysis was not broken down by country.
-
 __Key Variables__
 
 * __Mortality (%)__: `mortality` This variable was calculated from the WHO data which has population at risk per year per country and number of deaths attributed to malaria per year per country. 
 
-* __% of Households with IRS in Last 12 Months__: `percent_of_households_with_irs_in_last_12_months` This variable was accessed from a collection of WHO datasets.  
+* __% of Households with IRS in Last 12 Months__: `percent_of_households_with_irs_in_last_12_months` This variable was accessed from a collection of WHO datasets that had it compiled based on global surveys.  
+
+__Data Sources__
+
+We accessed the WHO STATdata (https://www.who.int/publications/i/item/9789241565721) collected about IRS spraying. Because this is a practice not used as much anymore, there was not as much data available and our analysis was not broken down by country.
+
+__Hypothesis Testing__
+
+* __Ho__: IRS spraying will not impact country level mortality rates
+* __H1__: IRS spraying will reduce country level mortality rates
+
+__Results__
 
 The following graph shows a weak relationship between IRS spraying and mortality rates due to lack of data.
+
 ```{r, echo = FALSE, message = FALSE}
 irs_df = 
 household_stat_df %>% 
@@ -254,6 +264,8 @@ fit_irs_mort = lm(mortality*100 ~ percent_of_households_with_irs_in_last_12_mont
 fit_irs_mort %>% 
   knitr::kable()
 ```
+
+We cannot reject the null hypothesis that IRS does not impact country level mortality rates. However, this is most likely due to lack of data and the usage of IRS spraying declining to mitigate mosquito-resistance. 
 
 ### Antimalarial drugs
 
