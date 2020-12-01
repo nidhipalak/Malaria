@@ -46,7 +46,8 @@ h1.title {
 ## Interventions Data links
 * [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
 * [Household Survey](data/household_survey_STAT.xls)
-* [Malaria death rates by age](data/malaria-death-rates-by-age.csv)
 * [Population at risk, estimated cases and death](data/population_at_risk_estimated_cases_deaths.xls)
+* [Mortality rates by age] (https://ourworldindata.org/grapher/malaria-death-rates-by-age)
+* [Children sleeping under bednets] (https://ourworldindata.org/grapher/children-sleeping-under-treated-bednet?region=World)
 
 
