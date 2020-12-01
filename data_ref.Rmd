@@ -42,6 +42,10 @@ h1.title {
 
 ## Correlations Data links
 * [Global Land temperature by country](data/GlobalLandTemperaturesByCountry.csv)
+* [Earth archive data](http://berkeleyearth.org/archive/data/)
+* [Our World in data]( https://ourworldindata.org/malaria)
+
+
 
 ## Interventions Data links
 * [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
