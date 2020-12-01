@@ -9,11 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Wuraola Olawole" />
 
-<meta name="date" content="2020-11-27" />
 
-<title>Untitled</title>
+<title>Possible Correlations</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -21,6 +19,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -252,6 +253,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -259,6 +323,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -280,35 +354,23 @@ $(document).ready(function () {
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="prev_mortality.html">
-    <span class="fa fa-bar-chart fa-sm"></span>
+    <span class="fa fa-bar-chart fa-lg"></span>
      
     Explore Cases
   </a>
 </li>
 <li>
-  <a href="pr_mosq.html">
-    <span class="fa fa-bug fa-sm"></span>
-     
-    Understand Causes
-  </a>
+  <a href="pr_mosq.html">Understand Causes</a>
 </li>
 <li>
-  <a href="weather_patterns.html">
-    <span class="fa fa-thermometer-quarter fa-sm"></span>
-     
-    Correlations
-  </a>
+  <a href="weather_patterns.html">Correlations</a>
 </li>
 <li>
-  <a href="interventions.html">
-    <span class="fa fa-spray-can fa-sm"></span>
-     
-    Interventions
-  </a>
+  <a href="interventions.html">Interventions</a>
 </li>
 <li>
   <a href="report.html">
-    <span class="fa fa-file-text-o fa-sm"></span>
+    <span class="fa fa-file-text-o fa-lg"></span>
      
     Project Report
   </a>
@@ -328,119 +390,18 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Untitled</h1>
-<h4 class="author">Wuraola Olawole</h4>
-<h4 class="date">11/27/2020</h4>
+<h1 class="title toc-ignore">Possible Correlations</h1>
 
 </div>
 
 
-<pre class="r"><code>library(tidyverse)
-library(readxl)</code></pre>
-<p>Mortality df for the 19 countries</p>
-<pre class="r"><code>mortality_df = 
-  read_csv(
-    &quot;./data/mortality.csv&quot;) %&gt;%
-    relocate(year, .after = region)</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   country = col_character(),
-##   year = col_double(),
-##   region = col_character(),
-##   reported_deaths = col_double(),
-##   estimated_deaths = col_double(),
-##   low_est = col_double(),
-##   high_est = col_double()
-## )</code></pre>
-<pre class="r"><code>countries = c(&quot;Nigeria&quot;, &quot;Democratic Republic of the Congo&quot;, &quot;Uganda&quot;,&quot;Mozambique&quot;, &quot;Côte d&#39;Ivoire&quot;, &quot;Niger&quot;, &quot;Burkina Faso&quot;, &quot;Mali&quot;, &quot;Angola&quot;, &quot;United Republic of Tanzania&quot;, &quot;India&quot;, &quot;Ghana&quot;, &quot;Cameroon&quot;, &quot;Rwanda&quot;, &quot;Benin&quot;, &quot;Malawi&quot;, &quot;Kenya&quot;, &quot;Guinea&quot;, &quot;Burundi&quot;)
-
-  mortality_df = 
-        mortality_df %&gt;% 
-          filter(country %in% countries, year %in% 2010:2018)</code></pre>
-<p>Cases by parasite species</p>
-<pre class="r"><code>confirm_df = 
-  read_xls(
-    &quot;./data/reported_cases_by_species.xls&quot;, range = &quot;A4:K502&quot;) %&gt;% 
-  filter(str_detect(
-    Year, &quot;P. falciparum|P. vivax&quot;
-  )) %&gt;% 
-  pivot_longer(
-    cols = &quot;2010&quot;:&quot;2018&quot;,
-    names_to = &quot;years&quot;,
-    values_to = &quot;cases&quot;
-  ) %&gt;% 
-  janitor::clean_names() %&gt;% 
-  rename(species = year,
-         country = who_region_country_area)</code></pre>
-<pre class="r"><code>by_country = 
-  confirm_df %&gt;% 
-  filter(country %in% countries) %&gt;% 
-  mutate(  
-    species = case_when(
-      species == &quot;Total: P. falciparum&quot; ~ &quot;P. falciparum&quot;)) %&gt;% 
-  drop_na(species)</code></pre>
-<p>population at risk, estimated cases</p>
-<pre class="r"><code>pop_df = 
-  read_xls(
-    &quot;./data/population_at_risk_estimated_cases_deaths.xls&quot;) %&gt;%
-  select(1:6) %&gt;%
-  rename(
-    region = &#39;Columna1&#39;,
-    country = &#39;Columna2&#39;,
-    year = &#39;Columna3&#39;,
-    pop_at_risk = &#39;Columna4&#39;,
-    cases_lower = &#39;Columna5&#39;,
-    cases_point = &#39;Columna6&#39;
-    ) %&gt;%
-  select(-cases_lower) %&gt;%
-  relocate(country, .before = region) %&gt;%
-  filter(country %in% countries) %&gt;%
-  mutate(
-    year = as.numeric(year),
-    pop_at_risk = as.numeric(pop_at_risk),
-    cases_point = as.numeric(cases_point)
-  )
-
-pop_df =
-      pop_df[-1,]</code></pre>
-<p>Reported cases by method of confirmation</p>
-<pre class="r"><code>rep_cases_df = 
-  read_xls(
-    &quot;./data/reported_cases_by_method_of_confirmation.xls&quot;)</code></pre>
-<pre><code>## New names:
-## * `` -&gt; ...2
-## * `` -&gt; ...3
-## * `` -&gt; ...4
-## * `` -&gt; ...5
-## * `` -&gt; ...6
-## * ...</code></pre>
-<pre class="r"><code>rep_cases_df =
-    rep_cases_df[-c(1:4),]
-
-rep_cases_df =
-    rep_cases_df %&gt;%
-      janitor::row_to_names(row_number = 1) %&gt;%
-  janitor::clean_names()
-  
-  rep_cases =
-      rep_cases_df[-1,]
-  rep_cases = 
-      rep_cases %&gt;%
-        pivot_longer(x2000:x2018, names_to = &quot;year&quot;, values_to = &quot;cases&quot; ) %&gt;%
-  rename(
-   country = &#39;who_region_country_area&#39;,
-   method = &#39;na&#39;
-   ) %&gt;%
-  select(-na_2)</code></pre>
-<pre class="r"><code>rep_cases =
-  rep_cases %&gt;%
-    mutate(
-      country = str_replace(country, &quot;1&quot;, &quot;&quot;), 
-      year = str_replace(year, &quot;x&quot;, &quot;&quot;),
-      year = as.numeric(year),
-      cases = as.numeric(cases)
-    ) %&gt;%
-  filter(country %in% countries)</code></pre>
+<p>Introduction to Page Why are we correlating to temp and percipitation</p>
+<div id="temperature" class="section level3">
+<h3>Temperature</h3>
+</div>
+<div id="percipitation" class="section level3">
+<h3>Percipitation</h3>
+</div>
 
 
 <!DOCTYPE html>
@@ -466,6 +427,8 @@ A work by <a href="https://github.com/nidhipalak">Nidhi Patel</a>, <a href="http
 </div>
 
 
+</div>
+</div>
 
 </div>
 
@@ -498,6 +461,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

@@ -9,10 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Team Malaria" />
+<meta name="author" content="Hanfei Qi" />
 
 
-<title>Proposal</title>
+<title>Confirmed Cases by PR Species</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,6 +23,15 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.9.2.1/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-1.52.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-1.52.2/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -276,16 +285,33 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="prev_mortality.html">Statistics</a>
+  <a href="prev_mortality.html">
+    <span class="fa fa-bar-chart fa-lg"></span>
+     
+    Explore Cases
+  </a>
 </li>
 <li>
-  <a href="pr_mosq.html">Causes</a>
+  <a href="pr_mosq.html">Understand Causes</a>
 </li>
 <li>
   <a href="weather_patterns.html">Correlations</a>
 </li>
 <li>
   <a href="interventions.html">Interventions</a>
+</li>
+<li>
+  <a href="report.html">
+    <span class="fa fa-file-text-o fa-lg"></span>
+     
+    Project Report
+  </a>
+</li>
+<li>
+  <a href="https://github.com/nidhipalak/Malaria.github.io">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -296,88 +322,36 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Proposal</h1>
-<h4 class="author">Team Malaria</h4>
-<h4 class="date">11/6/2020</h4>
+<h1 class="title toc-ignore">Confirmed Cases by PR Species</h1>
+<h4 class="author">Hanfei Qi</h4>
 
 </div>
 
 
-<p><strong>The group members</strong></p>
-<p>Wura Olawole (wo2179) <br> Hanfei Qi (hq2182)<br> Murrel Pereira (mwp2123)<br> Laura Gomez Merchan (lcg2154)<br> Nidhi Patel (np2619)<br></p>
-<p><strong>Tentative title</strong></p>
-<p>Team Malaria (we’re workshoping it)</p>
-<p><strong>The motivation</strong></p>
-<p>Although America is not a malaria hotspot, half of the world’s population lives in high risk malaria transmission regions. To this end, we seek to link and explore the interplay of various variables that contribute to this phenomenon. We intend to explore the geographic and climatic impact on mosquito species and by extension malaria. With the core understanding that understanding malaria also involves understanding Anopheles mosquito species which are vectors of the disease. Our motivation also stems from the fact that some of us (group members) have experienced the incidence of malaria on a first hand basis and have observed how it seems to have become a normal in various other parts of the world. We hope to contribute our knowledge quota by shedding more light on this. We found a great dataset that catalogs malaria incidence, mosquito prevalence, mosquito species, among other variables. <em>We hope to update the information that the class (and public) has about malaria and its vectors, and call attention rising risk of the evolution of resistant Anopheles mosquito species</em> We found mosquito species and its causal relationship to malaria, demographics, and other species to be interesting as well!</p>
-<p><strong>The intended final products</strong></p>
-<ul>
-<li>What is the relationship between species of mosquitoes?
-<ul>
-<li>Can we visualize evolution of species over time?</li>
-<li>Is there overlap of mosquito species?</li>
-<li>Is the proportion of mosquito species the same across all continents?</li>
-<li>Do the rates of evolution change over time (how long were a species dominant during a time period?)</li>
-</ul></li>
-<li>Trends over years
-<ul>
-<li>Heat, precipitation, vegetation, etc over a year with mosquito prevalence/malaria incidence</li>
-</ul></li>
-<li>Do areas with higher sickle cell traits have less malaria incidence?</li>
-<li>Compare time periods</li>
-</ul>
-<p>Potential ideas:</p>
-<ul>
-<li>Climate change and mosquito prevalence</li>
-<li>Relation of species genotypes</li>
-<li>Health education</li>
-<li>Topography</li>
-<li>Drop in malaria incidence with introduction of interventions (nets, etc)</li>
-<li>Severity of malaria in relation to species/time</li>
-</ul>
-<p><strong>The anticipated data sources</strong></p>
-<p><a href="https://malariaatlas.org/api-docs/">Malaria Atlas Species and Parasites</a> <br> <a href="https://malariaatlas.org/malaria-burden-data-download/">Malaria Atlas Mortality</a> <br> <a href="https://archive.researchdata.leeds.ac.uk/715/">Hydro-climate</a> <br> <a href="https://figshare.com/articles/LLIN_Raw_Data_xlsx/12552137/1">Net mapping</a></p>
-<p><strong>The planned analyses / visualizations / coding challenges</strong></p>
-<ul>
-<li>Planned analysis
-<ul>
-<li>We want to see the proportion of mosquito species across the different continent and relationship to malaria incidence</li>
-</ul></li>
-<li>Visualizations
-<ul>
-<li>A time series (2000-2017) world map with mosquito species prevalence
-<ul>
-<li>Maybe screenshots of year to year or a more smooth graphic?</li>
-</ul></li>
-<li>Incidence of malaria</li>
-<li>Genealogy of mosquito species</li>
-<li>Relationship with climate and malaria transmission</li>
-</ul></li>
-<li>Coding challenge
-<ul>
-<li>We want to create a genotype mapping visual of mosquito species. We have not found an available dataset with this data. Our potential solution is to use Selector Gadget and pull information from Wikipedia, which sounds tedious.<br />
-</li>
-<li>Time series world map</li>
-<li>Missing data</li>
-</ul></li>
-</ul>
-<p><strong>The planned timeline</strong></p>
-<ul>
-<li>Bi-weekly team meetings</li>
-<li>Steps:
-<ul>
-<li>Nov 7-10: Clean data
-<ul>
-<li>Nov 11 meeting: Clean data, test out visualizations on Madagascar</li>
-</ul></li>
-<li>Nov 11-16: Build visualizations</li>
-<li>Nov 17-19: Clean up visualizations</li>
-<li>Nov 20-21: Layout</li>
-<li>Nov 22-25: Write report; tell a story</li>
-<li>Nov 28-30: Make presentation</li>
-<li>Dec 1-4: Record</li>
-</ul></li>
-</ul>
+<p>Countries of interest: Nigeria, Democratic Republic of the Congo, Uganda, Mozambique, Côte d’Ivoire, Niger, Burkina Faso, Mali, Angola, United Republic of Tanzania, India, Ghana, Cameroon, Rwanda, Benin, Malawi, Kenya, Guinea, Burundi</p>
 
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+ 
+<hr />
+<p style="text-align: center;">
+A work by <a href="https://github.com/nidhipalak">Nidhi Patel</a>, <a href="https://github.com/gold95">Wura Olawole</a>, <a href="https://github.com/ws00289583">Hanfei Qi</a>, <a href="https://github.com/lauracg-coder">Laura Gomez Merchan</a>, and <a href="https://github.com/mwp2123">Murrel Pereira</a>
+</p>
+<p style="text-align: center;">
+© Copyright 2020 The Malaria Eradication Project Team, All Rights Reserved | Powered by Github.io
+</p>
+
+<p> </p>
+
+
+
+
+
+</div>
 
 
 

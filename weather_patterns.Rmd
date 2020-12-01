@@ -1,15 +1,24 @@
 ---
-title: "Weather Patterns"
-author: "Team Malaria"
-date: "11/10/2020"
-output: html_document
+title: "Global Temperature Patterns"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
-```{r setup}
+```{r setup, message = FALSE, warning = FALSE, include=FALSE}
 library(tidyverse)
 library(rvest)
 library(httr)
 library(plotly)
+library(readr)
+library(lubridate)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(viridis)
+library(tidyverse)
+require(gridExtra)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -24,94 +33,90 @@ scale_color_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-## Import Data from Kaggle 
-```{r}
-library(readr)
-library(lubridate)
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(viridis)
-library(tidyverse)
-require(gridExtra)
 
-```
+# Global Temperature Patterns per Country:
 
-#Import and Tidy data for Global Temperature per country:
-```{r}
+This is repackaged data from a newer compilation put together by the Berkeley Earth, which is affiliated with Lawrence Berkeley National Laboratory. The Berkeley Earth Surface Temperature Study combines 1.6 billion temperature reports from 16 pre-existing archives. 
+
+This data compiles the average temperature of 16 different countries from the years 1796 through 2013 with the corresponding Month and Day.
+
+The raw data set can be accessed from the following link:
+http://berkeleyearth.org/archive/data/
+
+
+```{r, warning = FALSE, include=FALSE}
 Globalcountry_temp_df =  read_csv("./Data/GlobalLandTemperaturesByCountry.csv") %>%
   separate(dt, c("Year","Month", "Day")) %>%
-  drop_na() 
+  filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")) %>%
+drop_na() 
 
+nrow(distinct(Globalcountry_temp_df, Country))
+min(Globalcountry_temp_df$Year)
+max(Globalcountry_temp_df$Year)
+```
+
+# Average Global Temperatures during 5 year periods 
+
+The estimates of the total number of deaths from the World Health Organization (WHO) and Global Burden of Disease (GBD) pinpoint a rise in deaths from the time period of 1990-2017. Their reports highlight a rise in Malaria beginning in 1990, downward trends in 2005 and eventually a significant decrease in 2017. 
+
+The report and corresponding figures can be found through the following link:
+https://ourworldindata.org/malaria
+
+```{r, warning = FALSE, include=FALSE}
 # Outbreak from 1750-1755
 outbreak_df = Globalcountry_temp_df %>%
-  filter(Year > 1750, Year < 1755)
+  filter(Year >= 1990, Year <= 1995)
 
 
 # No outbreak from 2000-2005
 nonoutbreak_df = Globalcountry_temp_df %>%
-  filter(Year > 2000, Year < 2005)
+  filter(Year > 2005, Year <= 2010)
   
   #mutate year, month, day into numeric even though categorical data?
 ```
 
+## During high Malaria Incidence (1990 - 1995): 
 
-## Visualiations 
+```{r, include=FALSE}
+outbreak_df_plot = outbreak_df %>% 
+  mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
+  plot_ly(y = ~AverageTemperature, color = ~Country, type = "box", colors = "viridis") 
+  #labs(
+    #title = "Average Temperature per country over each month for 1990- 1995")
+  
+```
 
-```{r Malaria_outbreak_df}
-
-outbreak_df_plot = outbreak_df %>%
-  ggplot(aes(x = Month, y = AverageTemperature, color = Country)) + 
-  geom_point(alpha = 0.25) + geom_line() +
-  coord_cartesian() +
-  theme(legend.position = "bottom") +
-  labs(
-    title = "Average Temperature per country over each month for 1750-1755",
-    x = "Month",
-    y = "Average Temperature ")
-outbreak_ggplotly = ggplotly(outbreak_df_plot)
-
-
-
-nonoutbreak_plot = nonoutbreak_df %>%
-  ggplot(aes(x = Month, y = AverageTemperature, color = Country)) + 
-  geom_point(alpha = 0.25) + geom_line() +
-  coord_cartesian() +
-  theme(legend.position = "bottom") +
-  labs(
-    title = "Average Temperature per country over each month for 2000-2005",
-    x = "Month",
-    y = "Average Temperature ")
-nonoutbreak_ggplotly = ggplotly(nonoutbreak_plot)
-
-grid.arrange(outbreak_df_plot, nonoutbreak_plot, ncol = 2)
-
-
-##Calculate the Uncertainty of the data sets
-
-#Outbreak_uncertainty_plot = outbreak_df %>%
-     #group_by(Year) %>%
-     #summarise(Year = first('Year'), 
-     #avg_temp = mean(AverageTemperature, na.rm = T), 
-     #avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) %>%
-     #ggplot(mapping = aes(x = Year, y = avg_temp)) +
-     #geom_line(color = viridis(1, begin = 0.7), mapping = aes(y = avg_conf)) +
-     #theme_bw()
-
-#Nonoutbreak_uncertainty_plot = nonoutbreak_df %>%
-     #group_by(Year) %>%
-     #summarise(Year = first(Year), 
-     #avg_temp = mean(AverageTemperature, na.rm = T), 
-     #avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) %>%
-     #ggplot(mapping = aes(x = Year, y = avg_temp)) +
-     #geom_line(color = viridis(1, begin = 0.7), mapping = aes(y = avg_conf)) +
-     #theme_bw()
-
+```{r}
+outbreak_df_plot
 ```
 
 
-# By season for outbreak
-```{r outbreak_df}
+## During low Malaria Incidence (2000 - 2005):  
+```{r, include=FALSE}
+nonoutbreak_plot = nonoutbreak_df %>%
+  mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
+  plot_ly(y = ~AverageTemperature, color = ~Country, type = "box", colors = "viridis") 
+
+  #labs(
+    #title = "Average Temperature per country over each month for 2000-2005",
+
+```
+
+```{r}
+nonoutbreak_plot
+```
+
+
+# Average Global Temperatures during 5 year periods per seasons:
+
+The data set for *Global Temperature Patterns per Country* was further broken down to show temperature patterns based on seasons of the year. 
+
+Our data set describes countries mostly countries based on the African content.
+
+Note:For many countries in Africa, the seasons do not follow the same pattern they do in New Zealand or Australia. Instead of Summer, Autumn, Winter and Spring, most countries in East Africa and Southern Africa have a wet season(s) and a dry season.
+
+## During high Malaria Incidence (1990 - 1995) per seasons: 
+```{r, include=FALSE}
 make_seasons = function(m) {
   factor((m %% 12) %/% 3, labels = c('Winter', 'Spring', 'Summer', 'Autumn'))
  }
@@ -120,11 +125,11 @@ make_seasons = function(m) {
    mutate(Year = as.numeric(Year)) %>%
    mutate(Month = as.numeric(Month)) %>%
    mutate(Seasons = make_seasons(Month)) %>%
-     group_by(Month, Seasons,Year) %>%
-    summarise(Month = first(Month),    #what happens if remove first(Month)
+     group_by(Seasons,Year) %>%
+    summarise(
                avg_temp = mean(AverageTemperature, na.rm = T), 
                avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) 
-
+ 
 
  outbreakseasons_plot = seasons1_df %>%
   ggplot(mapping = aes(x = Year, y = avg_temp, color = Seasons)) + 
@@ -133,14 +138,19 @@ make_seasons = function(m) {
   theme(legend.position = "bottom") +
   scale_color_viridis(discrete = T) +
   labs(
-    title = "Average Temperature per Seaons for 1750-1755",
+    title = "Average Temperature per Seaons for 1990 - 1995",
     x = "Year",
     y = "Average Temperature ")
 
 ```
 
-# By season for nonoutbreak
-```{r nonoutbreak_df}
+```{r}
+outbreakseasons_plot
+```
+
+
+# During low Malaria Incidence (2000 - 2005) per seasons: 
+```{r nonoutbreak_df, include=FALSE}
 
 make_seasons = function(m) {
   factor((m %% 12) %/% 3, labels = c('Winter', 'Spring', 'Summer', 'Autumn'))
@@ -150,8 +160,8 @@ make_seasons = function(m) {
    mutate(Year = as.numeric(Year)) %>%
    mutate(Month = as.numeric(Month)) %>%
    mutate(Seasons = make_seasons(Month)) %>%
-     group_by(Month, Seasons, Year) %>%
-    summarise(Month = first(Month),    #what happens if remove first(Month)
+     group_by(Seasons, Year) %>%
+    summarise(
                avg_temp = mean(AverageTemperature, na.rm = T), 
                avg_conf = mean(AverageTemperatureUncertainty, na.rm = T)) 
 
@@ -167,24 +177,71 @@ make_seasons = function(m) {
     title = "Average Temperature per Seaons for 2000-2005",
     x = "Year",
     y = "Average Temperature ")
- 
+```
+
+```{r}
+ nonoutbreakseasons_plot
 ```
 
 
-## Leaflet Visualizations???
+## Malaria Estimated Deaths Compared to Temperature per Country 
+```{r malaria_df, include=FALSE}
+## Malaria Data
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*"
+reported = read_html(url)
+
+reported = reported %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value) %>% 
+  rename(reported_deaths = numeric_value)
+
+## Mortality rates - estimated
+
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*"
+estimated = read_html(url)
+
+estimated = estimated %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value, low_range, high_range) %>% 
+  rename(estimated_deaths = numeric_value, 
+         low_est = low_range,
+         high_est = high_range)
+Reported_deaths = 
+  left_join(reported, estimated, by = c("country" = "country", "year" = "year", "region" = "region")) 
+
+Temp_Death_df = left_join(Globalcountry_temp_df, Reported_deaths, by = c("Country" = "country")) %>% filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
+```
+
+```{r, include=FALSE}
+Final_comparison_ggplot = Temp_Death_df %>%
+  ggplot(aes(x = reported_deaths, y = AverageTemperature, color = Country)) + 
+  geom_point(alpha = 0.25) +
+  theme(legend.position = "bottom") +
+  coord_cartesian() +
+  scale_color_viridis(discrete = T) +
+  labs(
+    title = "Average Temperature Compared to Estimated Deaths per Country",
+    x = "Reported Deaths",
+    y = "Average Temperature ")
+
+Final_comparison = ggplotly(Final_comparison_ggplot)
 
 
+```
 
-Describe the data set:
+```{r}
+Final_comparison
+```
 
-access from: (http://berkeleyearth.org/archive/data/):
-Repackaged data from a newer compilation put together by the Berkeley Earth, which is affiliated with Lawrence Berkeley National Laboratory. The Berkeley Earth Surface Temperature Study combines 1.6 billion temperature reports from 16 pre-existing archives. The dataset includes several files:
 
-The Globalcountry_temp_df comes from the Global Land Temperatures by Country (GlobalLandTemperaturesByCountry.csv) and contains the following:
-
-Year: starts in 1850 for max and min land temperatures and land temperatures
-Month, Day, Average Temperature, temperature, country 
-Average Temperature Uncertainty: the 95% confidence interval around the average 
 
 
 

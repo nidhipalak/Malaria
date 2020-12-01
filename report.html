@@ -11,7 +11,7 @@
 
 
 
-<title>Possible Correlations</title>
+<title>Project Report</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -25,6 +25,19 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -351,16 +364,52 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="prev_mortality.html">Statistics</a>
+  <a href="prev_mortality.html">
+    <span class="fa fa-bar-chart fa-sm"></span>
+     
+    Explore Cases
+  </a>
 </li>
 <li>
-  <a href="pr_mosq.html">Causes</a>
+  <a href="pr_mosq.html">
+    <span class="fa fa-bug fa-sm"></span>
+     
+    Understand Causes
+  </a>
 </li>
 <li>
-  <a href="weather_patterns.html">Correlations</a>
+  <a href="weather_patterns.html">
+    <span class="fa fa-thermometer-quarter fa-sm"></span>
+     
+    Correlations
+  </a>
 </li>
 <li>
-  <a href="interventions.html">Interventions</a>
+  <a href="interventions.html">
+    <span class="fa fa-spray-can fa-sm"></span>
+     
+    Interventions
+  </a>
+</li>
+<li>
+  <a href="report.html">
+    <span class="fa fa-file-text-o fa-sm"></span>
+     
+    Project Report
+  </a>
+</li>
+<li>
+  <a href="data_ref.html">
+    <span class="fa fa-cloud-download-alt"></span>
+     
+    Reference
+  </a>
+</li>
+<li>
+  <a href="https://github.com/nidhipalak/Malaria.github.io">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -371,19 +420,108 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Possible Correlations</h1>
+<h1 class="title toc-ignore">Project Report</h1>
 
 </div>
 
 
-<p>Introduction to Page Why are we correlating to temp and percipitation</p>
-<div id="temperature" class="section level3">
-<h3>Temperature</h3>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>Although America is not a malaria hotspot, according to CDC, half of the world’s population lives in high risk malaria transmission regions. Our interest in Malaria stems from our individual experiences with Malaria has most of us have ties to countries that have high prevalence of Malaria. In exploring different data sets we found some interesting patterns. Most importantly, we found that Malaria can be eradicated even in countries that are current hot spots if proper preventive measures are followed.</p>
+<p>Malaria is a vector borne disease that is preventable and curable. The parasite responsible for causing malaria is Plasmodium <em>spp</em>. These parasites are carried by the female anopheles mosquito. Malaria is more common in regions with high humidity and rainfall. The people at most risk for malaria include; infants, children under 5, pregnant women, HIV/AIDS patients, non-immune migrants, and travelers.</p>
 </div>
-<div id="percipitation" class="section level3">
-<h3>Percipitation</h3>
+<div id="related-work" class="section level2">
+<h2>Related work</h2>
+<p><a href="https://www.who.int/publications/i/item/9789241565721">World Malaria Report 2019</a></p>
+<p>The World Malaria Report provides annual updates on Malaria trends around the world. The report also contains information about yearly investments, research and tracks the progress of all intervention areas. The information provided in the report is often received from national malaria control programmes in endemic countries</p>
+<p><a href="https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html">Malaria Atlas Project</a></p>
+<p>Malaria Atlas project is a platform that disseminates Malaria data via their Repository for Open Access Data (ROAD-MAP) project. On this platform one can find spatial distribution of Malaria prevalence, incidence, intervention and other important Malaria topics.</p>
+</div>
+<div id="initial-questions" class="section level2">
+<h2>Initial questions</h2>
+<p>The following were initial questions we tried to answer at the beginning.</p>
+<ul>
+<li>What is the relationship between species of mosquitoes?
+<ul>
+<li>Can we visualize evolution of species over time?</li>
+<li>Is there overlap of mosquito species?</li>
+<li>Is the proportion of mosquito species the same across all continents?</li>
+<li>Do the rates of evolution change over time (how long were a species dominant during a time period?)</li>
+</ul></li>
+<li>Trends over years
+<ul>
+<li>Heat, precipitation, vegetation, etc over a year with mosquito prevalence/malaria incidence</li>
+</ul></li>
+<li>Do areas with higher sickle cell traits have less malaria incidence?</li>
+<li>Compare time periods</li>
+</ul>
+<p>Due to scarcity of data, we were unable to explore some of the initial questions we had set out to answer. As we continued to work with the datasets we had we were able to gete a feel for the questions we could answer given the limitations of our data.</p>
+<p>Furthermore, in order to get the most out of our data, we filtered by a list of our countries of interest. These countries of interest according to WHO had the highest prevalence and incidence of Malaria. This way, we focused more on data from critical countries.</p>
+<div id="reasons-why-we-ask-those-questions" class="section level3">
+<h3>Reasons why we ask those questions</h3>
+</div>
+</div>
+<div id="data-source-scraping-method-cleaning-etc." class="section level2">
+<h2>Data: Source, scraping method, cleaning, etc.</h2>
+<div id="explore-cases" class="section level3">
+<h3>Explore Cases</h3>
+</div>
+<div id="causes" class="section level3">
+<h3>Causes</h3>
+<p>For vectors (mosquitoes) and parasites of Malaria, We used vector data from Malaria Atlas Project, and parasite data from WHO Malaria Report 2019. The Malaria Atlas data was already tidy, so we only had to filter by our countries of interest. The WHO data on the other hand needed to be cleaned up. The original data had 11 variables: Country/area, year, 2010 to 2018 (each year was one variable). The final tidied data contained four variables: country, species, years, and cases. After tidying the data, Only <em>P. falciparum</em> and <em>P.vivax</em> parasite species remained because they were the predominant causes of Malaria in our countries of interest.</p>
+</div>
+<div id="correlations" class="section level3">
+<h3>Correlations</h3>
+</div>
+<div id="interventions" class="section level3">
+<h3>Interventions</h3>
+</div>
+</div>
+<div id="exploratory-analysis" class="section level2">
+<h2>Exploratory analysis</h2>
+<div id="explore-cases-1" class="section level3">
+<h3>Explore Cases</h3>
+</div>
+<div id="causes-1" class="section level3">
+<h3>Causes</h3>
+<p>Since the mosquito species data had small sample size (&lt; 30 for most species) and not consistent across years, we used maps to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by <em>P. falciparum</em> in countries of interest, from 2010 to 2018, since it was the dominant cause of malaria for most countries. Additionally, a plot for confirmed cases by <em>P. vivax</em> in India because only India had consistent data for both <em>P. falciparum</em> and <em>P. vivax</em>, and the numbers were quite similar.</p>
+</div>
+<div id="correlations-1" class="section level3">
+<h3>Correlations</h3>
+</div>
+<div id="interventions-1" class="section level3">
+<h3>Interventions</h3>
+</div>
+</div>
+<div id="additional-analysis" class="section level2">
+<h2>Additional analysis</h2>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
 </div>
 
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+ 
+<hr />
+<p style="text-align: center;">
+A work by <a href="https://github.com/nidhipalak">Nidhi Patel</a>, <a href="https://github.com/gold95">Wura Olawole</a>, <a href="https://github.com/ws00289583">Hanfei Qi</a>, <a href="https://github.com/lauracg-coder">Laura Gomez Merchan</a>, and <a href="https://github.com/mwp2123">Murrel Pereira</a>
+</p>
+<p style="text-align: center;">
+© Copyright 2020 The Malaria Eradication Project Team, All Rights Reserved | Powered by Github.io
+</p>
+
+<p> </p>
+
+
+
+
+
+</div>
 
 
 </div>
@@ -395,7 +533,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

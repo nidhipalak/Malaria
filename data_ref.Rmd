@@ -1,0 +1,53 @@
+---
+title: "Data Reference"
+output:
+  html_document:
+    code_folding: hide
+---
+
+<style type="text/css">
+
+h1.title {
+  
+  text-align: center
+}
+
+</style>
+
+
+
+## Statistics Data links
+
+* [Mortality Rates Reported](https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*)
+
+
+* [Mortality Rates Estimated](https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*)
+
+
+* [Reported indigneous confirmed cases](https://apps.who.int/gho/athena/data/GHO/WHS3_48.html?profile=ztable&filter=COUNTRY:*)
+
+
+* [Malaria estimated cases](https://apps.who.int/gho/athena/data/GHO/MALARIA002.html?profile=ztable&filter=COUNTRY:*)
+
+
+* [Malaria incidence per 1000 pop at risk](https://apps.who.int/gho/athena/data/GHO/SDGMALARIA.html?profile=ztable&filter=COUNTRY:*;REGION:*)
+
+
+
+## Causes Data links
+* [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
+* [Reported cases by Species](data/reported_cases_by_species.xls)
+* [CDC Malaria](https://www.cdc.gov/malaria/about/biology/index.html#tabs-1-6)
+* [Malaria Atlas Project](https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html)
+
+## Correlations Data links
+* [Global Land temperature by country](data/GlobalLandTemperaturesByCountry.csv)
+
+## Interventions Data links
+* [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
+* [Household Survey](data/household_survey_STAT.xls)
+* [Population at risk, estimated cases and death](data/population_at_risk_estimated_cases_deaths.xls)
+* [Mortality rates by age] (https://ourworldindata.org/grapher/malaria-death-rates-by-age)
+* [Children sleeping under bednets] (https://ourworldindata.org/grapher/children-sleeping-under-treated-bednet?region=World)
+
+
