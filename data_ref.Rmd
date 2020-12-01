@@ -38,6 +38,7 @@ h1.title {
 * [World Malaria Report 2019](https://www.who.int/publications/i/item/9789241565721)
 * [Reported cases by Species](data/reported_cases_by_species.xls)
 * [CDC Malaria](https://www.cdc.gov/malaria/about/biology/index.html#tabs-1-6)
+* [Malaria Atlas Project](https://cran.r-project.org/web/packages/malariaAtlas/vignettes/overview.html)
 
 ## Correlations Data links
 * [Global Land temperature by country](data/GlobalLandTemperaturesByCountry.csv)
