@@ -30,6 +30,8 @@ scale_fill_discrete = scale_fill_viridis_d
 
 Introduction to Page
 
+One of the major contributors to change in Prevalence, incidence and mortality rates of Malaria is Vector and parasite species distribution. For most of our countries of interest, most of the mosquito species carry _P. falciparum_ which is the predominant parasite specie and major cause of Malaria (_P. falciparum_ is the deadliest Malaria parasite). This may help to understand the overall high mortality rates observed in our countries of interest.
+
 # Vectors: Mosquitoes
 
 Over 3,500 species of mosquitoes grouped into 41 genera have been identified. Of these, Malaria is only transmitted by the female species of the genus Anopheles. To date, there are 430 species of this genus approximately, and of these only 30 to 40 of these species are vectors in nature that actually transmit Malaria.
@@ -182,3 +184,4 @@ by_india %>%
     color = ~country, text = ~text_label, alpha = 0.5) %>% 
   layout(title = 'Confirmed cases by P. vivax in India')
 ```
+
