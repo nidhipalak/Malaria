@@ -6,9 +6,8 @@ output:
     toc_float: true
 ---
 
-Introduction to Page
 
-While many countries in North America and parts of Europe have been able to eliminate the incidence of Malaria, many parts of the world are still plagued by this vector borne illness.  
+While many countries in North America and parts of Europe have been able to eliminate the incidence of Malaria, many parts of the world are still plagued by this vector borne illness. The plots below show the changes in prevalence, incidence and mortality rates as observed over time, comparing the reported cases with the estimated cases for our countries of interest. Factors such as temperature, intervention , vector and parasite species etc contribute to the changes observed and influence these rates over time.
 
 
 
