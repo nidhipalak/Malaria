@@ -36,12 +36,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 # Global Temperature Patterns per Country:
 
-This is repackaged data from a newer compilation put together by the Berkeley Earth, which is affiliated with Lawrence Berkeley National Laboratory. The Berkeley Earth Surface Temperature Study combines 1.6 billion temperature reports from 16 pre-existing archives. 
-
-This data compiles the average temperature of 16 different countries from the years 1796 through 2013 with the corresponding Month and Day.
-
-The raw data set can be accessed from the following link:
-http://berkeleyearth.org/archive/data/
+As a factor that affects the distribution of vector and parasite species, Temperature also play a role in incidence and prevalence rates. Here, we compare temperature with the incidence of Malaria in our countries of interest. 
 
 
 ```{r, warning = FALSE, include=FALSE}
