@@ -28,8 +28,6 @@ scale_colour_discrete = scale_color_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-Introduction to Page
-
 One of the major contributors to change in Prevalence, incidence and mortality rates of Malaria is Vector and parasite species distribution. For most of our countries of interest, most of the mosquito species carry _P. falciparum_ which is the predominant parasite specie and major cause of Malaria (_P. falciparum_ is the deadliest Malaria parasite). This may help to understand the overall high mortality rates observed in our countries of interest.
 
 # Vectors: Mosquitoes
@@ -185,3 +183,6 @@ by_india %>%
   layout(title = 'Confirmed cases by P. vivax in India')
 ```
 
+The mosquito species and parasite species might vary by different weather, temperature, and other factors!
+
+Learn more about malaria by clicking the links in the navigation bar.
