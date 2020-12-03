@@ -14,6 +14,7 @@ library(ggridges)
 library(readxl)
 library(plotly)
 library(patchwork)
+library(lme4)
 
 knitr::opts_chunk$set(
   fig.width=6,
@@ -199,6 +200,7 @@ fit_itn_owi %>%
   knitr:::kable()
   
 ```
+
 
 Based on the above analysis, we can reject the null hypothesis and conclude that ITN usage among children improves mortality rates by 4 children per 100,000 children when controlled for countries. We explored an interaction effect between country and use of ITNs, but found no statistically signficant effect, but the dataset might also not be well powered to detect that effect. India, Kenya and Rwanda were also countries that were shown to not have a statistically significant effect - most likely because of lack of data in those countries.
 
