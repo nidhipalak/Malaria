@@ -85,7 +85,7 @@ In the plots below, we can see that there is a lot of odd overlap:
 *   I think it is very interesting that estimated cases is significantly higher than reported cases.  What variables used caused this jump?
 *   In some cases, reported data overlaps with estimated data.  This occurs in Ghana, Guinea, and Uganda. 
 
-#### Explore Prevalence and Mortality
+## Explore Prevalence and Mortality
 ```{r warning=FALSE, echo=FALSE, message = FALSE}
 burden = read_csv("./data/malariawho.csv") %>% 
   filter(country %in% c("Nigeria", "Democratic Republic of the Congo", "Uganda", "Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
