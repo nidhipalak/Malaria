@@ -91,7 +91,7 @@ burden = read_csv("./data/malariawho.csv") %>%
   filter(country %in% c("Nigeria", "Democratic Republic of the Congo", "Uganda", "Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
 ```
 
-#### Prevalence reported and estimated
+## Prevalence reported and estimated
 
 ```{r echo=FALSE, warning = FALSE}
 knitr::opts_chunk$set(
