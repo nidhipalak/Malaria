@@ -85,7 +85,7 @@ For vectors (mosquitoes) and parasites of Malaria, We used vector data from Mala
 
 ### Correlations
 
-### Interventions
+The data that was used to analyze weather patterns, all came from the Berkeley Earth afiliated with the Lawrence Berkeley National Laboratory. We worked with the data from "The Berkeley Earth Surface Temperature Study" to document average temperature (°C) for 16 different countries from 1793-2006. We then separated the data into five year intervals that overlapped with time periods of high incidences(1990-1995) and low incidences (2000-2005) of Malaria in 16 different countries that overlapped with the Mortality data to better represent other aspects of the project. This will create more comparable datasets to create a comparison with other factors.    
 
 __Insecticide Treated Bed Nets: Data Sources__
 
@@ -108,6 +108,64 @@ We accessed the [WHO STAT data](https://www.who.int/publications/i/item/97892415
 Since the mosquito species data had small sample size (< 30 for most species) and not consistent across years, we used maps to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by _P. falciparum_ in countries of interest, from 2010 to 2018, since it was the dominant cause of malaria for most countries. Additionally, a plot for confirmed cases by _P. vivax_ in India because only India had consistent data for both _P. falciparum_ and _P. vivax_, and the numbers were quite similar.
 
 ### Correlations
+
+The final visualization compared the average temperature and the mortality data of Malaria filtered to include 16 countries to show a trend in higher mortality data attributed to certain temperature values. Most reported deaths because of malaria seem to be clustered in the 20-30 °C range with some outlier values of higher reported death count still within the range of 20-30 °C. 
+
+```{r, include=FALSE}
+## Malaria Data
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*"
+reported = read_html(url)
+
+reported = reported %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value) %>% 
+  rename(reported_deaths = numeric_value)
+
+## Mortality rates - estimated
+
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*"
+estimated = read_html(url)
+
+estimated = estimated %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value, low_range, high_range) %>% 
+  rename(estimated_deaths = numeric_value, 
+         low_est = low_range,
+         high_est = high_range)
+Reported_deaths = 
+  left_join(reported, estimated, by = c("country" = "country", "year" = "year", "region" = "region")) 
+
+Temp_Death_df = left_join(Globalcountry_temp_df, Reported_deaths, by = c("Country" = "country")) %>% filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
+```
+
+```{r, include=FALSE}
+Final_comparison_ggplot = Temp_Death_df %>%
+  ggplot(aes(x = reported_deaths, y = AverageTemperature, color = Country)) + 
+  geom_point(alpha = 0.25) +
+  theme(legend.position = "bottom") +
+  coord_cartesian() +
+  scale_color_viridis(discrete = T) +
+  labs(
+    title = "Average Temperature Compared to Estimated Deaths per Country",
+    x = "Reported Deaths",
+    y = "Average Temperature ")
+
+Final_comparison = ggplotly(Final_comparison_ggplot)
+
+
+```
+
+```{r}
+Final_comparison
+```
 
 ### Interventions
 
