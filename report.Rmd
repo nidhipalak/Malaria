@@ -71,63 +71,13 @@ Due to scarcity of data, we were unable to explore some of the initial questions
 
 Furthermore, in order to get the most out of our data, we filtered by a list of our countries of interest. These countries of interest according to WHO had the highest prevalence and incidence of Malaria. This way, we focused more on data from critical countries.
 
+### Reasons why we ask those questions
+
 
 
 ## Data: Source, scraping method, cleaning, etc.
-Prevalence, mortality and incidence data is sourced from the WHO. Reported cases dates back to the early 2000’s, estimated cases were calculated 2010 onwards.  Some challenges within this data set includes missing information.  Although the WHO is one of the most reputable sources of information, they did not give us sources for their data. 
 
-Some areas of concern were estimated measurements given by the WHO.  
-
-In the plots below, we can see that there is a lot of odd overlap:
-
-*   Interestingly, prevalence seems to increase in most countries over the years. Estimated prevalence increased in all countries except Uganda, Nigeria, and India.
-*   Reported data also increased, but this may be attributed to more access to reporting and care. 
-*   I think it is very interesting that estimated cases is significantly higher than reported cases.  What variables used caused this jump?
-*   In some cases, reported data overlaps with estimated data.  This occurs in Ghana, Guinea, and Uganda. 
-
-## Explore Prevalence and Mortality
-```{r warning=FALSE, echo=FALSE, message = FALSE}
-burden = read_csv("./data/malariawho.csv") %>% 
-  filter(country %in% c("Nigeria", "Democratic Republic of the Congo", "Uganda", "Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
-```
-
-## Prevalence reported and estimated
-
-```{r echo=FALSE, warning = FALSE}
-knitr::opts_chunk$set(
-  fig.width = 10,
-  fig.height = 15,
-  out.width = "90%")
-
-prev_facet = burden %>% 
-  ggplot() +
-  geom_line(aes(x = year, y = reported_cases, color = country)) +
-  geom_errorbar(aes(x = year, group = year, ymin = low_est_cases, ymax = high_est_cases)) +
-  geom_line(aes(x = year, y = estimated_cases)) +
-  facet_wrap(~country, ncol = 4, scales = "free_y") +
-  theme(legend.position = "none")
-
-prev_facet
-```
-
-### Mortality Reported and Estimated
-
-```{r echo=FALSE, warning = FALSE}
-knitr::opts_chunk$set(
-  fig.width = 10,
-  fig.height = 15,
-  out.width = "90%")
-
-mortality_facet = burden %>% 
-  ggplot() +
-  geom_line(aes(x = year, y = reported_deaths, color = country)) +
-  geom_errorbar(aes(x = year, group = year, ymin = low_est_death, ymax = high_est_death)) +
-  geom_line(aes(x = year, y = estimated_deaths)) +
-  facet_wrap(~country, ncol = 4, scales = "free_y") +
-  theme(legend.position = "none")
-
-mortality_facet
-```
+### Explore Cases
 
 ### Causes
 
@@ -135,7 +85,7 @@ For vectors (mosquitoes) and parasites of Malaria, We used vector data from Mala
 
 ### Correlations
 
-### Interventions
+The data that was used to analyze weather patterns, all came from the Berkeley Earth afiliated with the Lawrence Berkeley National Laboratory. We worked with the data from "The Berkeley Earth Surface Temperature Study" to document average temperature (°C) for 16 different countries from 1793-2006. We then separated the data into five year intervals that overlapped with time periods of high incidences(1990-1995) and low incidences (2000-2005) of Malaria in 16 different countries that overlapped with the Mortality data to better represent other aspects of the project. This will create more comparable datasets to create a comparison with other factors.    
 
 __Insecticide Treated Bed Nets: Data Sources__
 
@@ -158,6 +108,64 @@ We accessed the [WHO STAT data](https://www.who.int/publications/i/item/97892415
 Since the mosquito species data had small sample size (< 30 for most species) and not consistent across years, we used maps to visualize cumulative number of different mosquito species for Africa and Asia. Most malaria cases were diagnosed in these regions. For confirmed cases by parasite species, we plotted line plots of confirmed cases by _P. falciparum_ in countries of interest, from 2010 to 2018, since it was the dominant cause of malaria for most countries. Additionally, a plot for confirmed cases by _P. vivax_ in India because only India had consistent data for both _P. falciparum_ and _P. vivax_, and the numbers were quite similar.
 
 ### Correlations
+
+The final visualization compared the average temperature and the mortality data of Malaria filtered to include 16 countries to show a trend in higher mortality data attributed to certain temperature values. Most reported deaths because of malaria seem to be clustered in the 20-30 °C range with some outlier values of higher reported death count still within the range of 20-30 °C. 
+
+```{r, include=FALSE}
+## Malaria Data
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA001.html?profile=ztable&filter=COUNTRY:*"
+reported = read_html(url)
+
+reported = reported %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value) %>% 
+  rename(reported_deaths = numeric_value)
+
+## Mortality rates - estimated
+
+url = "https://apps.who.int/gho/athena/data/GHO/MALARIA003.html?profile=ztable&filter=COUNTRY:*"
+estimated = read_html(url)
+
+estimated = estimated %>% 
+  html_nodes(css = "table") %>% 
+  first() %>% 
+  html_table() %>%
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  select(country, year, region, numeric_value, low_range, high_range) %>% 
+  rename(estimated_deaths = numeric_value, 
+         low_est = low_range,
+         high_est = high_range)
+Reported_deaths = 
+  left_join(reported, estimated, by = c("country" = "country", "year" = "year", "region" = "region")) 
+
+Temp_Death_df = left_join(Globalcountry_temp_df, Reported_deaths, by = c("Country" = "country")) %>% filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
+```
+
+```{r, include=FALSE}
+Final_comparison_ggplot = Temp_Death_df %>%
+  ggplot(aes(x = reported_deaths, y = AverageTemperature, color = Country)) + 
+  geom_point(alpha = 0.25) +
+  theme(legend.position = "bottom") +
+  coord_cartesian() +
+  scale_color_viridis(discrete = T) +
+  labs(
+    title = "Average Temperature Compared to Estimated Deaths per Country",
+    x = "Reported Deaths",
+    y = "Average Temperature ")
+
+Final_comparison = ggplotly(Final_comparison_ggplot)
+
+
+```
+
+```{r}
+Final_comparison
+```
 
 ### Interventions
 
@@ -476,7 +484,7 @@ fit_irs_mort %>%
   knitr::kable(caption = "Linear relationship: mortality and ACT usage among children under 5")
 ```
 
-#### Conclusions
+### Conclusions
 
 The above analyses looks across malaria prevention methods using ITNs, IRS, and ACT usage. The dataset was the most comprehensive for how much data was available for bednets and we were able to confirm a relationship with ITN usage and mortality.
 
