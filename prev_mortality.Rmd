@@ -33,8 +33,9 @@ Plots of prevalence reported and estimated by WHO by country over years. Interes
 prevalence = burden %>%
   select(country, year, reported_cases, estimated_cases, low_est_cases, high_est_cases) %>%
   plot_ly(x = ~year) %>% 
-  add_trace(y = ~reported_cases, type = "scatter", mode = "lines", color = ~country, colors = "Reds", name = "Reported", hovetemplate = "%{country}") %>% 
-   add_trace(y = ~estimated_cases, type = "scatter", mode = "marker", color = ~country, colors = "Reds", name = "Estimated", hoverinfo = "%{country}") %>% 
+  add_trace(y = ~reported_cases, type = "scatter", mode = "lines", color = ~country, colors = "Reds", name = "Reported") %>% 
+   add_trace(y = ~estimated_cases, type = "scatter", mode = "marker", color = ~country, colors = "Reds", name = "Estimated") %>% 
+    style(visible = "legendonly") %>% 
   layout(
     hovermode = "x unified", 
     showlegend = FALSE,
@@ -121,6 +122,7 @@ mortality = burden %>%
   plot_ly(x = ~year, color = ~country) %>% 
   add_trace(y = ~reported_deaths, type = "scatter", mode = "lines", color = ~country, colors = "Blues", name = "Reported") %>% 
   add_trace(y = ~estimated_deaths, type = "scatter", mode = "marker", color = ~country, colors = "Blues", name = "Estimated") %>% 
+    style(visible = "legendonly") %>% 
   layout(
     hovermode = "x unified", 
     showlegend = FALSE,
