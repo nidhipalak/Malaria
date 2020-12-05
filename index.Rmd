@@ -41,7 +41,10 @@ Based on the World Health Organization (WHO) report, we have gathered data on 19
 
 * __Correlations tab__: In this tab we show the relationship between average temperature and seasonal outbreaks of Malaria.
 
-* __Interventions tab__: Here we explore several intervention measures. We assess the effectiveness of various interventions by checking that they indeed have a reducing effect on child mortality.
+* __Interventions tab__: Here we explore several intervention measures. We assess the effectiveness of various interventions by
+checking that they indeed have a reducing effect on child mortality.
+
+* __Project Report tab__: This tab contains a detailed report on our process and findings in the course of this project
 
 * __Reference tab__: The data sets used in this project can be found [here](data_ref.html)
 
