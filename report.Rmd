@@ -14,6 +14,11 @@ library(ggridges)
 library(readxl)
 library(plotly)
 library(patchwork)
+library(lme4)
+library(rvest)
+library(httr)
+library(viridis)
+require(gridExtra)
 
 knitr::opts_chunk$set(
   fig.width=6,
@@ -139,6 +144,15 @@ estimated = estimated %>%
          high_est = high_range)
 Reported_deaths = 
   left_join(reported, estimated, by = c("country" = "country", "year" = "year", "region" = "region")) 
+
+Globalcountry_temp_df =  read_csv("./Data/GlobalLandTemperaturesByCountry.csv") %>%
+  separate(dt, c("Year","Month", "Day")) %>%
+  filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")) %>%
+drop_na() 
+
+nrow(distinct(Globalcountry_temp_df, Country))
+min(Globalcountry_temp_df$Year)
+max(Globalcountry_temp_df$Year)
 
 Temp_Death_df = left_join(Globalcountry_temp_df, Reported_deaths, by = c("Country" = "country")) %>% filter(Country == c("Nigeria", "Democratic Republic of the Congo", "Uganda","Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
 ```
