@@ -72,7 +72,7 @@ nonoutbreak_df = Globalcountry_temp_df %>%
 
 ## During high Malaria Incidence (1990 - 1995): 
 
-```{r, include=FALSE}
+```{r, include=FALSE, warning=FALSE}
 outbreak_df_plot = outbreak_df %>% 
   mutate(Country = fct_reorder(Country, AverageTemperature)) %>% 
   plot_ly(y = ~AverageTemperature, color = ~Country, type = "box", colors = "viridis") 
@@ -81,7 +81,7 @@ outbreak_df_plot = outbreak_df %>%
   
 ```
 
-```{r}
+```{r, echo=FALSE}
 outbreak_df_plot
 ```
 
@@ -97,7 +97,7 @@ nonoutbreak_plot = nonoutbreak_df %>%
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 nonoutbreak_plot
 ```
 
@@ -139,7 +139,7 @@ make_seasons = function(m) {
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 outbreakseasons_plot
 ```
 
@@ -174,7 +174,7 @@ make_seasons = function(m) {
     y = "Average Temperature ")
 ```
 
-```{r}
+```{r, echo=FALSE}
  nonoutbreakseasons_plot
 ```
 
@@ -232,7 +232,7 @@ Final_comparison = ggplotly(Final_comparison_ggplot)
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 Final_comparison
 ```
 

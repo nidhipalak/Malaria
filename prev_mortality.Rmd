@@ -27,7 +27,7 @@ burden = read_csv("./data/malariawho.csv") %>%
 
 ## Prevalence
 
-Plots of reported and estimated cases by WHO by country over years. Interestingly, prevalence seems to increase in most countries over the years. Read more about the mosquitos and parasites that cause malaria in the [Understanding Causes tab](pr_mosq.html)!
+Plots of reported and estimated cases by WHO by country over years. Interestingly, prevalence seems to increase in most countries over the years. Read more about the mosquitos and parasites that cause malaria in the [Understand Causes tab](pr_mosq.html)!
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 prevalence = burden %>%
