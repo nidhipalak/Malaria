@@ -27,7 +27,7 @@ burden = read_csv("./data/malariawho.csv") %>%
 
 ## Prevalence
 
-Plots of prevalence reported and estimated by WHO by country over years. Interestingly, prevalence seems to increase in most countries over the years.
+Plots of reported and estimated cases by WHO by country over years. Interestingly, prevalence seems to increase in most countries over the years. Read more about the mosquitos and parasites that cause malaria in the [Understanding Causes tab](pr_mosq.html)!
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 prevalence = burden %>%
@@ -114,7 +114,7 @@ prevalence
 
 ## Mortality
 
-Mortality is documented by reported deaths and estimated deaths. As expected, reported deaths are far lower than estimated deaths.  However, from estimated deaths, we see some countries trending towards lower numbers!
+Mortality is documented by number of reported deaths and estimated deaths. As expected, reported deaths are far lower than estimated deaths.  However, from estimated deaths, we see some countries trending towards lower numbers! Look at trends between mortality and weather patterns in the [Correlations tab](weather_patterns.html)!
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 mortality = burden %>%
@@ -199,7 +199,7 @@ mortality
 
 ## Incidence
 
-Plot of incidence rates over years.  There seems to be a peak around 2010 in incidence rates.
+Plot of incidence rates over years.  There seems to be a peak around 2010 in incidence rates. Learn more about how interventions relate to incidence and death in the [Interventions tab](interventions.html)!
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 incidence = burden %>%
@@ -211,5 +211,95 @@ incidence = burden %>%
     yaxis = list(title = "Incidence per 1000 people"))
 
 incidence
+```
+
+## Death to Cases Ratio
+
+Here we have death to case ratios by country. These plots show the number of deaths divided by the number of cases. 
+
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
+ratio = burden %>%
+  select(country, year, reported_deaths, estimated_deaths, reported_cases, estimated_cases) %>%
+  filter(country %in% c("Nigeria", "Democratic Republic of the Congo", "Uganda", "Mozambique", "Cote d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi")) %>%
+  mutate(
+    est_ratio = (estimated_deaths / estimated_cases) * 100,
+    rep_ratio = (reported_deaths / reported_cases) * 100
+  ) %>% 
+    plot_ly(x = ~year, color = ~country) %>% 
+  add_trace(y = ~rep_ratio, type = "scatter", mode = "lines", color = ~country, colors = "Greens", name = "Reported %") %>% 
+  add_trace(y = ~rep_ratio, type = "scatter", mode = "marker", color = ~country, colors = "Greens", name = "Estimated %") %>% 
+    style(visible = "legendonly") %>% 
+  layout(
+    hovermode = "x unified", 
+    showlegend = FALSE,
+    title = "Death to case ratio",
+    yaxis = list(title = "Deaths/Cases"),
+    updatemenus = list(
+      list(
+        type = "dropdown",
+        y = 0.8,
+        active = 0,
+        buttons = list(
+          list(method = "restyle",
+               args = list("visible", c(T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Angola"),
+          list(method = "restyle",
+               args = list("visible", c(F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Benin"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Burkina Faso"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Burundi"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Cameroon"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Côte d'Ivoire"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Democratic Republic of Congo"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Ghana"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F,F)), 
+               label = "Guinea"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F,F)), 
+               label = "India"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F,F)), 
+               label = "Kenya"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F,F)), 
+               label = "Malawi"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F,F)), 
+               label = "Mali"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F,F)), 
+               label = "Mozambique"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F,F)), 
+               label = "Niger"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F,F)), 
+               label = "Nigeria"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F,F)), 
+               label = "Rwanda"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T,F)), 
+               label = "Uganda"),
+          list(method = "restyle",
+               args = list("visible", c(F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,F,T)), 
+               label = "United Republic of Tanzania")
+          ))
+    ))
+
+ratio
 ```
 

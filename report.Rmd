@@ -78,8 +78,102 @@ Furthermore, in order to get the most out of our data, we filtered by a list of 
 
 
 ## Data: Source, scraping method, cleaning, etc.
+```{r warning=FALSE, echo=FALSE, message = FALSE}
+burden = read_csv("./data/malariawho.csv") %>% 
+  filter(country %in% c("Nigeria", "Democratic Republic of the Congo", "Uganda", "Mozambique", "Côte d'Ivoire", "Niger", "Burkina Faso", "Mali", "Angola", "United Republic of Tanzania", "India", "Ghana", "Cameroon", "Rwanda", "Benin", "Malawi", "Kenya", "Guinea", "Burundi"))
+```
+Prevalence, mortality and incidence data is sourced from the WHO. Reported cases dates back to the early 2000’s, estimated cases were calculated 2010 onwards.  Some challenges within this data set includes missing information.  Although the WHO is one of the most reputable sources of information, they did not give us sources for their data. 
 
 ### Explore Cases
+Some areas of concern are estimated measurements given by the WHO.  In the plots below, we can see that there is a lot of odd overlap.  Here are some notes of interest:
+
+*	Interestingly, prevalence seems to increase in most countries over the years. Estimated prevalence increased in all countries except Uganda, Nigeria, and India.
+*	Reported data also increased, but this may be attributed to more access to reporting and care. 
+*	I think it is very interesting that estimated cases is significantly higher than reported cases.  What variables used caused this jump?
+*	In some cases, reported data overlaps with estimated data.  This occurs in Ghana, Guinea, and Uganda. 
+
+```{r echo=FALSE, warning = FALSE}
+prev_facet = burden %>% 
+  ggplot() +
+  geom_line(aes(x = year, y = reported_cases, color = country)) +
+  geom_errorbar(aes(x = year, group = year, ymin = low_est_cases, ymax = high_est_cases)) +
+  geom_line(aes(x = year, y = estimated_cases)) +
+  facet_wrap(~country, ncol = 4, scales = "free_y") +
+  theme(legend.position = "none") + 
+  labs(
+    title = "Reported and estimated cases with estimate errors",
+    x = "year",
+    y = "number of cases"
+  )
+
+prev_facet
+```
+
+### Exploring Deaths
+Reported and estimated deaths by malaria were also sourced from the WHO. Like cases, we were unable to find sources for these numbers. When looking at estimated and reported deaths, we see quite a few trends, some expected, and some not:
+
+*	One of the most interesting trends (in my opinion) is the decrease in error range.  This means there is an overall improvement in reporting strategies and data collection within the country, so the ranges in confidence are not as high!  This trend is shown in Burkina Faso, Côte d'Ivoire, Ghana, Guinea, Malawi, Mali, Mozambique, and Rwanda! 
+*	It is important to note that estimated deaths trends downwards in all countries except Burundi, Benin and United Republic of Tanzania, where mortality cases increase; Angola, Kenya, and Rwanda, where mortality numbers seem to have plateaued
+*	Interestingly, many countries have reported and estimated rates that vary greatly!
+  	* Angola has a large peak in reported deaths in 2003; Cameroon in 2008, Côte d'Ivoire and Malawi in 2009
+  	* Burundi and Democratic Republic of Congo have increased their reported number to match the estimated deaths, however, the error ranges have not changed!
+  	* Benin, Burkina Faso, Ghana, and Mozambique reported trends similarly to estimated deaths
+  	* Finally, Kenya has reported more deaths than the estimated as predicted in 2010 and 2011
+
+```{r echo=FALSE, warning = FALSE}
+mortality_facet = burden %>% 
+  ggplot() +
+  geom_line(aes(x = year, y = reported_deaths, color = country)) +
+  geom_errorbar(aes(x = year, group = year, ymin = low_est_death, ymax = high_est_death)) +
+  geom_line(aes(x = year, y = estimated_deaths)) +
+  facet_wrap(~country, ncol = 4, scales = "free_y") +
+  theme(legend.position = "none") + 
+  labs(
+    title = "Reported and estimated deaths with estimate errors",
+    x = "year",
+    y = "number of cases"
+  )
+
+mortality_facet
+```
+## Incidence and Ratios
+
+Incidence was sourced from WHO and death to case ratios were calculated from WHO prevalence and mortality reporting.
+
+The incidence plot under [Explore Cases](prev_mortality.html), shows an interesting peak in indicence rates among most countries in 2010.  I looked for any change or reason for this peak, hypothesizing a new, grandeur intervention was put in place. However, when looking at case by case data, it seems that indicence rates decreased for various reasons:
+
+*   ITNs were introduced
+*   ACT became free for all people
+*   Diagnosis testing were available for all age groups and free!
+
+The Death-to-Case plot shows the percentage of those who have died from malaria by the number of cases.  Some exciting trends are:
+
+*  The decreasing percent of deaths is an exciting trend to watch! With many preventative and medicinal interventions, it is exciting to see a decrease in deaths. 
+*  Almost all countries are trending downwards in the death to case ratios over time!! Jump to Interventions to see how likely we can eradicate Malaria! 
+*  India is the only country that seems to trend upwards in death-to-case ratio
+
+```{r echo=FALSE, warning = FALSE}
+ratio_facet = burden %>% 
+  select(country, year, reported_deaths, estimated_deaths, reported_cases, estimated_cases) %>% 
+  drop_na(reported_deaths, estimated_deaths, reported_cases, estimated_cases) %>% 
+  mutate(
+    est_ratio = (estimated_deaths / estimated_cases) * 100,
+    rep_ratio = (reported_deaths / reported_cases) * 100
+  ) %>%
+  ggplot() +
+  geom_line(aes(x = year, y = rep_ratio, color = country)) +
+  geom_line(aes(x = year, y = est_ratio)) +
+  facet_wrap(~country, ncol = 4, scales = "free_y") +
+  theme(legend.position = "none") + 
+  labs(
+    title = "Estimated and reported death to case ratios",
+    x = "year",
+    y = "death/case",
+    caption = "estimated percentages are in black"
+  )
+
+ratio_facet
+```
 
 ### Causes
 
@@ -174,7 +268,7 @@ Final_comparison = ggplotly(Final_comparison_ggplot)
 
 ```
 
-```{r}
+```{r, echo = FALSE}
 Final_comparison
 ```
 
